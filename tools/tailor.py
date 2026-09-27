@@ -16,8 +16,10 @@ What it does (tailor):
   4. compiles with tectonic; if it spills past one page, drops the least JD-relevant skills from the
      end until it fits. Font sizes and layout never change.
   5. scores the base track and the tailored version against the JD, commits + pushes the branch, and
-     copies the PDF (same filename as the original) + a report to ~/zylos/vault/resumes-sent/.
-Prints one JSON object; "pdf" is the file to upload.
+     leaves the PDF (same filename as the original) in /tmp/zylos-tailored/<branch>/ for upload.
+     No local archive: the git branch is the record (Cindy 09-27).
+Prints one JSON object; "pdf" is the file to upload. --jd - reads the JD from stdin.
+Safe to run from parallel appliers (one run at a time via a file lock).
 
 The score is a transparent keyword-coverage score (what ATS keyword filters and recruiter searches
 key on): sum of weights of JD skills found anywhere in the résumé text / sum of all JD skill weights.
@@ -29,7 +31,8 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LEX = json.load(open(os.path.join(REPO, "tools", "lexicon.json")))
 BANK = json.load(open(os.path.join(REPO, "skills-bank.json")))
 TECTONIC = shutil.which("tectonic") or "/opt/homebrew/bin/tectonic"
-SENT = os.path.expanduser("~/zylos/vault/resumes-sent")
+OUT = "/tmp/zylos-tailored"   # transient: the PDF only needs to live until it is uploaded (Cindy: no local archive)
+LOCK = os.path.join(REPO, "build", ".tailor.lock")
 PDF_NAME = "F26_Xinyi_Cindy_Bin_Resume_SWE.pdf"
 GIT_ENV = dict(os.environ, GIT_AUTHOR_NAME="Xinyi Bin", GIT_COMMITTER_NAME="Xinyi Bin",
                GIT_AUTHOR_EMAIL="186866710+xinyichan04@users.noreply.github.com",
@@ -288,8 +291,18 @@ def show(branch, path):
 
 # ------------------------------------------------------------------ commands
 
+def read_jd(path):
+    return sys.stdin.read() if path == "-" else open(path).read()
+
+
 def cmd_tailor(a):
-    jd = open(a.jd).read()
+    import fcntl
+    os.makedirs(os.path.dirname(LOCK), exist_ok=True)
+    lock = open(LOCK, "w")
+    fcntl.flock(lock, fcntl.LOCK_EX)        # parallel appliers: git worktrees/refs are shared state
+    jd = read_jd(a.jd)
+    if len(jd.strip()) < 200:
+        raise SystemExit("JD text too short (<200 chars): pass the full job description")
     weights = jd_weights(jd, a.company)
     track, track_scores = (a.track, None) if a.track != "auto" else pick_track(jd, weights)
     base = "main" if track == "swe" and not git("branch", "--list", "swe") else track
@@ -346,12 +359,10 @@ def cmd_tailor(a):
 
         git("add", "skills.tex", cwd=tree)
         git("commit", "-q", "-m", f"Tailor for {a.company}: {a.role} (ATS score {base_score} -> {new_score})", cwd=tree)
-        dest = os.path.join(SENT, f"{date}_{slug(a.company, 20)}_{slug(a.role)}")
+        dest = os.path.join(OUT, slug(branch, 80))
         os.makedirs(dest, exist_ok=True)
         shutil.copy(pdf, os.path.join(dest, PDF_NAME))
-        shutil.copy(a.jd, os.path.join(dest, "jd.txt"))
         report["pdf"] = os.path.join(dest, PDF_NAME)
-        json.dump(report, open(os.path.join(dest, "report.json"), "w"), indent=1)
         if not a.no_push:
             r = subprocess.run(["git", "push", "-q", "origin", branch], cwd=tree, capture_output=True, text=True, env=GIT_ENV)
             report["pushed"] = r.returncode == 0
@@ -362,7 +373,7 @@ def cmd_tailor(a):
 
 
 def cmd_score(a):
-    jd = open(a.jd).read()
+    jd = read_jd(a.jd)
     weights = jd_weights(jd)
     main = show(a.branch, "resume.tex")
     body = main[main.index(r"\begin{document}"):].replace(r"\input{skills.tex}", show(a.branch, "skills.tex"))
@@ -373,7 +384,7 @@ def cmd_score(a):
 
 
 def cmd_track(a):
-    jd = open(a.jd).read()
+    jd = read_jd(a.jd)
     t, sc = pick_track(jd, jd_weights(jd))
     print(json.dumps({"track": t, "scores": sc}))
 
