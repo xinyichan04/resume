@@ -188,9 +188,9 @@ def row_items(skills_tex, label):
     return [x.strip() for x in m.group(1).split(",")] if m else []
 
 
-# Cindy 09-26 late: "for skills im missing just add it into my skillset". JD skills outside the bank are
-# added too (status 'jd-added'), as long as the JD weights them >= ADD_MIN (so "what you'll learn" extras
-# at x0.5 are not added). They are listed in the report as study_list so she can prep before interviews.
+# Cindy 09-26 late: "for skills im missing just add it into my skillset" / "assume i know all the skills but
+# i just didnt list". Every JD skill outside the bank is added too (status 'jd-added'), placed by JD weight,
+# and listed in the report as study_list.
 ADD_MIN = 0.0  # Cindy 09-26 late: "assume i know all the skills but i just didnt list" -> add every JD skill
 DISPLAY = {"aws": "AWS", "gcp": "GCP", "microsoft azure": "Azure", "nlp": "NLP", "rag": "RAG", "cuda": "CUDA",
            "langchain": "LangChain", "kubernetes": "Kubernetes", "go": "Go", "sql": "SQL", "nosql": "NoSQL",
