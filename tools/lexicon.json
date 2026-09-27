@@ -1,0 +1,1648 @@
+{
+ "_doc": "Deterministic JD lexicon for jd-match.js (Felix pivot 2026-09-03). Concrete languages/frameworks/tools/databases/platforms only \u2014 no concept chips (concurrency, distributed systems, etc.). `name` is the canonical lowercase key apply-skills.js already normalizes/displays; `aliases` are matched case-insensitively at word boundaries; `pattern` (regex source, case-sensitive) overrides aliases for short/ambiguous tokens. Category order breaks score ties.",
+ "categories": [
+  "language",
+  "framework",
+  "ml",
+  "data",
+  "database",
+  "cloud",
+  "devops",
+  "tool",
+  "protocol"
+ ],
+ "entries": [
+  {
+   "name": "python",
+   "cat": "language"
+  },
+  {
+   "name": "c++",
+   "cat": "language",
+   "aliases": [
+    "c++",
+    "cpp",
+    "c/c++"
+   ]
+  },
+  {
+   "name": "c",
+   "cat": "language",
+   "pattern": "\\bC(?=\\s*[,/]\\s*(?:C\\+\\+|Java|Python|Rust|Go|C#|Fortran)|\\s+(?:programming|language)\\b|\\s+(?:and|or)\\s+(?:C\\+\\+|Rust|Python|Java|assembly))|(?<=C\\+\\+\\s{0,2}[,/]\\s{0,2})C\\b|(?<=\\b(?:embedded|in|with|using)\\s)C\\b(?=[\\s,.)])"
+  },
+  {
+   "name": "c#",
+   "cat": "language",
+   "aliases": [
+    "c#",
+    "csharp"
+   ]
+  },
+  {
+   "name": "java",
+   "cat": "language",
+   "pattern": "\\bJava\\b(?!Script)"
+  },
+  {
+   "name": "javascript",
+   "cat": "language",
+   "aliases": [
+    "javascript",
+    "es6",
+    "ecmascript"
+   ]
+  },
+  {
+   "name": "typescript",
+   "cat": "language",
+   "aliases": [
+    "typescript"
+   ]
+  },
+  {
+   "name": "go",
+   "cat": "language",
+   "pattern": "\\bGolang\\b|\\bGo\\b(?=\\s*[,/)]|\\s+(?:programming|language|lang)\\b|\\s+(?:and|or)\\s+[A-Z])|(?<=[,/]\\s{0,2})Go\\b|(?<=\\b(?:in|with|using|of)\\s)Go\\b"
+  },
+  {
+   "name": "rust",
+   "cat": "language",
+   "pattern": "\\bRust\\b"
+  },
+  {
+   "name": "kotlin",
+   "cat": "language"
+  },
+  {
+   "name": "swift",
+   "cat": "language",
+   "pattern": "\\bSwift\\b(?!\\s*(?:ly|ness))"
+  },
+  {
+   "name": "scala",
+   "cat": "language"
+  },
+  {
+   "name": "ruby",
+   "cat": "language"
+  },
+  {
+   "name": "php",
+   "cat": "language"
+  },
+  {
+   "name": "r",
+   "cat": "language",
+   "pattern": "\\bR\\b(?=\\s*[,/)]|\\s+(?:programming|language|studio|shiny)\\b|\\s+(?:and|or)\\s+[A-Z])|(?<=[,/]\\s{0,2})R\\b"
+  },
+  {
+   "name": "matlab",
+   "cat": "language"
+  },
+  {
+   "name": "julia",
+   "cat": "language",
+   "pattern": "\\bJulia\\b(?=\\s*[,/)]|\\s+(?:programming|language)\\b)"
+  },
+  {
+   "name": "perl",
+   "cat": "language"
+  },
+  {
+   "name": "dart",
+   "cat": "language"
+  },
+  {
+   "name": "objective-c",
+   "cat": "language",
+   "aliases": [
+    "objective-c",
+    "objective c",
+    "objc"
+   ]
+  },
+  {
+   "name": "bash",
+   "cat": "language",
+   "aliases": [
+    "bash",
+    "shell scripting",
+    "shell script",
+    "shell scripts",
+    "zsh"
+   ]
+  },
+  {
+   "name": "powershell",
+   "cat": "language"
+  },
+  {
+   "name": "sql",
+   "cat": "language",
+   "aliases": [
+    "sql",
+    "t-sql",
+    "pl/sql"
+   ]
+  },
+  {
+   "name": "haskell",
+   "cat": "language"
+  },
+  {
+   "name": "ocaml",
+   "cat": "language"
+  },
+  {
+   "name": "standard ml",
+   "cat": "language",
+   "aliases": [
+    "standard ml",
+    "sml"
+   ]
+  },
+  {
+   "name": "lua",
+   "cat": "language"
+  },
+  {
+   "name": "assembly",
+   "cat": "language",
+   "aliases": [
+    "assembly language",
+    "x86 assembly",
+    "arm assembly",
+    "assembly"
+   ]
+  },
+  {
+   "name": "verilog",
+   "cat": "language",
+   "aliases": [
+    "verilog",
+    "systemverilog",
+    "vhdl"
+   ]
+  },
+  {
+   "name": "cuda",
+   "cat": "language"
+  },
+  {
+   "name": "solidity",
+   "cat": "language"
+  },
+  {
+   "name": "html/css",
+   "cat": "language",
+   "aliases": [
+    "html/css",
+    "html5",
+    "html",
+    "css",
+    "css3",
+    "sass",
+    "scss",
+    "tailwind",
+    "tailwind css"
+   ]
+  },
+  {
+   "name": "react",
+   "cat": "framework",
+   "aliases": [
+    "react",
+    "react.js",
+    "reactjs"
+   ]
+  },
+  {
+   "name": "react native",
+   "cat": "framework"
+  },
+  {
+   "name": "next.js",
+   "cat": "framework",
+   "aliases": [
+    "next.js",
+    "nextjs"
+   ]
+  },
+  {
+   "name": "angular",
+   "cat": "framework",
+   "aliases": [
+    "angular",
+    "angularjs"
+   ]
+  },
+  {
+   "name": "vue",
+   "cat": "framework",
+   "aliases": [
+    "vue",
+    "vue.js",
+    "vuejs",
+    "nuxt"
+   ]
+  },
+  {
+   "name": "svelte",
+   "cat": "framework"
+  },
+  {
+   "name": "node.js",
+   "cat": "framework",
+   "aliases": [
+    "node.js",
+    "nodejs",
+    "node js"
+   ],
+   "pattern": "\\bNode(?:\\.js|JS|js)?\\b(?!\\s+(?:in|of)\\s+(?:a|the)\\s+(?:graph|tree|cluster))"
+  },
+  {
+   "name": "express",
+   "cat": "framework",
+   "aliases": [
+    "express.js",
+    "expressjs"
+   ]
+  },
+  {
+   "name": "django",
+   "cat": "framework"
+  },
+  {
+   "name": "flask",
+   "cat": "framework"
+  },
+  {
+   "name": "fastapi",
+   "cat": "framework"
+  },
+  {
+   "name": "spring",
+   "cat": "framework",
+   "aliases": [
+    "spring boot",
+    "spring framework",
+    "springboot"
+   ]
+  },
+  {
+   "name": ".net",
+   "cat": "framework",
+   "aliases": [
+    ".net",
+    "asp.net",
+    ".net core",
+    "dotnet"
+   ]
+  },
+  {
+   "name": "rails",
+   "cat": "framework",
+   "aliases": [
+    "ruby on rails",
+    "rails"
+   ]
+  },
+  {
+   "name": "flutter",
+   "cat": "framework"
+  },
+  {
+   "name": "swiftui",
+   "cat": "framework"
+  },
+  {
+   "name": "android",
+   "cat": "framework",
+   "aliases": [
+    "android",
+    "android sdk",
+    "jetpack compose"
+   ]
+  },
+  {
+   "name": "ios",
+   "cat": "framework",
+   "aliases": [
+    "ios",
+    "uikit"
+   ]
+  },
+  {
+   "name": "electron",
+   "cat": "framework"
+  },
+  {
+   "name": "qt",
+   "cat": "framework",
+   "pattern": "\\bQt\\b"
+  },
+  {
+   "name": "unity",
+   "cat": "framework",
+   "pattern": "\\bUnity\\b(?!\\s+(?:of|among|between))"
+  },
+  {
+   "name": "unreal engine",
+   "cat": "framework",
+   "aliases": [
+    "unreal engine",
+    "unreal"
+   ]
+  },
+  {
+   "name": "ros",
+   "cat": "framework",
+   "aliases": [
+    "ros",
+    "ros2",
+    "ros 2",
+    "robot operating system"
+   ]
+  },
+  {
+   "name": "boost",
+   "cat": "framework",
+   "pattern": "\\bBoost\\b(?=\\s*(?:C\\+\\+|library|libraries|\\.))"
+  },
+  {
+   "name": "graphql",
+   "cat": "framework"
+  },
+  {
+   "name": "pytorch",
+   "cat": "ml",
+   "aliases": [
+    "pytorch",
+    "torch"
+   ]
+  },
+  {
+   "name": "tensorflow",
+   "cat": "ml",
+   "aliases": [
+    "tensorflow"
+   ]
+  },
+  {
+   "name": "keras",
+   "cat": "ml"
+  },
+  {
+   "name": "jax",
+   "cat": "ml",
+   "pattern": "\\bJAX\\b"
+  },
+  {
+   "name": "scikit-learn",
+   "cat": "ml",
+   "aliases": [
+    "scikit-learn",
+    "scikit learn",
+    "sklearn"
+   ]
+  },
+  {
+   "name": "numpy",
+   "cat": "ml"
+  },
+  {
+   "name": "pandas",
+   "cat": "ml"
+  },
+  {
+   "name": "scipy",
+   "cat": "ml"
+  },
+  {
+   "name": "matplotlib",
+   "cat": "ml",
+   "aliases": [
+    "matplotlib",
+    "seaborn",
+    "plotly"
+   ]
+  },
+  {
+   "name": "xgboost",
+   "cat": "ml",
+   "aliases": [
+    "xgboost",
+    "lightgbm",
+    "catboost"
+   ]
+  },
+  {
+   "name": "hugging face",
+   "cat": "ml",
+   "aliases": [
+    "hugging face",
+    "huggingface",
+    "transformers library"
+   ]
+  },
+  {
+   "name": "langchain",
+   "cat": "ml",
+   "aliases": [
+    "langchain",
+    "langgraph",
+    "llamaindex"
+   ]
+  },
+  {
+   "name": "large language models",
+   "cat": "ml",
+   "aliases": [
+    "large language models",
+    "large language model",
+    "llm",
+    "llms",
+    "gpt",
+    "openai api",
+    "anthropic api",
+    "claude api"
+   ]
+  },
+  {
+   "name": "rag",
+   "cat": "ml",
+   "aliases": [
+    "rag",
+    "retrieval-augmented generation",
+    "retrieval augmented generation"
+   ]
+  },
+  {
+   "name": "vector databases",
+   "cat": "ml",
+   "aliases": [
+    "vector database",
+    "vector databases",
+    "vector db",
+    "pinecone",
+    "weaviate",
+    "faiss",
+    "milvus",
+    "pgvector",
+    "chroma"
+   ]
+  },
+  {
+   "name": "embeddings",
+   "cat": "ml",
+   "aliases": [
+    "embeddings",
+    "embedding models"
+   ]
+  },
+  {
+   "name": "opencv",
+   "cat": "ml"
+  },
+  {
+   "name": "computer vision",
+   "cat": "ml"
+  },
+  {
+   "name": "nlp",
+   "cat": "ml",
+   "aliases": [
+    "nlp",
+    "natural language processing"
+   ]
+  },
+  {
+   "name": "mlflow",
+   "cat": "ml",
+   "aliases": [
+    "mlflow",
+    "weights & biases",
+    "wandb"
+   ]
+  },
+  {
+   "name": "onnx",
+   "cat": "ml",
+   "aliases": [
+    "onnx",
+    "tensorrt",
+    "triton"
+   ]
+  },
+  {
+   "name": "llvm",
+   "cat": "ml",
+   "aliases": [
+    "llvm",
+    "mlir",
+    "xla"
+   ]
+  },
+  {
+   "name": "ray",
+   "cat": "ml",
+   "pattern": "\\bRay\\b(?=\\s*(?:\\(|,|/|cluster|serve|train|tune|data))"
+  },
+  {
+   "name": "spark",
+   "cat": "data",
+   "aliases": [
+    "apache spark",
+    "spark",
+    "pyspark"
+   ]
+  },
+  {
+   "name": "hadoop",
+   "cat": "data",
+   "aliases": [
+    "hadoop",
+    "hdfs",
+    "mapreduce"
+   ]
+  },
+  {
+   "name": "kafka",
+   "cat": "data",
+   "aliases": [
+    "kafka",
+    "apache kafka"
+   ]
+  },
+  {
+   "name": "airflow",
+   "cat": "data",
+   "aliases": [
+    "airflow",
+    "apache airflow"
+   ]
+  },
+  {
+   "name": "dbt",
+   "cat": "data",
+   "pattern": "\\bdbt\\b"
+  },
+  {
+   "name": "snowflake",
+   "cat": "data"
+  },
+  {
+   "name": "databricks",
+   "cat": "data"
+  },
+  {
+   "name": "bigquery",
+   "cat": "data"
+  },
+  {
+   "name": "redshift",
+   "cat": "data"
+  },
+  {
+   "name": "flink",
+   "cat": "data",
+   "aliases": [
+    "flink",
+    "apache flink"
+   ]
+  },
+  {
+   "name": "etl",
+   "cat": "data",
+   "aliases": [
+    "etl",
+    "elt",
+    "data pipelines",
+    "data pipeline"
+   ]
+  },
+  {
+   "name": "tableau",
+   "cat": "data",
+   "aliases": [
+    "tableau",
+    "power bi",
+    "looker"
+   ]
+  },
+  {
+   "name": "amazon sqs",
+   "cat": "data",
+   "aliases": [
+    "sqs",
+    "amazon sqs",
+    "sns",
+    "rabbitmq",
+    "message queues",
+    "message queue",
+    "pub/sub"
+   ]
+  },
+  {
+   "name": "postgresql",
+   "cat": "database",
+   "aliases": [
+    "postgresql",
+    "postgres"
+   ]
+  },
+  {
+   "name": "mysql",
+   "cat": "database",
+   "aliases": [
+    "mysql",
+    "mariadb"
+   ]
+  },
+  {
+   "name": "sqlite",
+   "cat": "database"
+  },
+  {
+   "name": "mongodb",
+   "cat": "database",
+   "aliases": [
+    "mongodb",
+    "mongo"
+   ]
+  },
+  {
+   "name": "redis",
+   "cat": "database",
+   "aliases": [
+    "redis",
+    "memcached"
+   ]
+  },
+  {
+   "name": "dynamodb",
+   "cat": "database"
+  },
+  {
+   "name": "cassandra",
+   "cat": "database",
+   "aliases": [
+    "cassandra",
+    "scylladb"
+   ]
+  },
+  {
+   "name": "elasticsearch",
+   "cat": "database",
+   "aliases": [
+    "elasticsearch",
+    "opensearch",
+    "elastic search"
+   ]
+  },
+  {
+   "name": "nosql",
+   "cat": "database"
+  },
+  {
+   "name": "oracle",
+   "cat": "database",
+   "aliases": [
+    "oracle database",
+    "oracle db",
+    "oracle sql"
+   ]
+  },
+  {
+   "name": "sql server",
+   "cat": "database",
+   "aliases": [
+    "sql server",
+    "mssql",
+    "microsoft sql server"
+   ]
+  },
+  {
+   "name": "firebase",
+   "cat": "database",
+   "aliases": [
+    "firebase",
+    "firestore",
+    "supabase"
+   ]
+  },
+  {
+   "name": "neo4j",
+   "cat": "database",
+   "aliases": [
+    "neo4j",
+    "graph database",
+    "graph databases"
+   ]
+  },
+  {
+   "name": "aws",
+   "cat": "cloud",
+   "aliases": [
+    "aws",
+    "amazon web services",
+    "ec2",
+    "s3",
+    "lambda functions",
+    "aws lambda",
+    "cloudformation",
+    "eks",
+    "ecs"
+   ]
+  },
+  {
+   "name": "gcp",
+   "cat": "cloud",
+   "aliases": [
+    "gcp",
+    "google cloud",
+    "google cloud platform",
+    "gke",
+    "cloud run",
+    "vertex ai"
+   ]
+  },
+  {
+   "name": "microsoft azure",
+   "cat": "cloud",
+   "aliases": [
+    "azure",
+    "microsoft azure",
+    "aks"
+   ]
+  },
+  {
+   "name": "cloudflare",
+   "cat": "cloud",
+   "aliases": [
+    "cloudflare",
+    "cloudflare workers"
+   ]
+  },
+  {
+   "name": "vercel",
+   "cat": "cloud",
+   "aliases": [
+    "vercel",
+    "netlify"
+   ]
+  },
+  {
+   "name": "serverless",
+   "cat": "cloud"
+  },
+  {
+   "name": "docker",
+   "cat": "devops",
+   "aliases": [
+    "docker",
+    "containers",
+    "containerization",
+    "podman"
+   ]
+  },
+  {
+   "name": "kubernetes",
+   "cat": "devops",
+   "aliases": [
+    "kubernetes",
+    "k8s",
+    "helm"
+   ]
+  },
+  {
+   "name": "terraform",
+   "cat": "devops",
+   "aliases": [
+    "terraform",
+    "infrastructure as code",
+    "iac",
+    "pulumi",
+    "ansible"
+   ]
+  },
+  {
+   "name": "ci-cd",
+   "cat": "devops",
+   "aliases": [
+    "ci/cd",
+    "ci-cd",
+    "continuous integration",
+    "continuous delivery",
+    "continuous deployment",
+    "jenkins",
+    "gitlab ci",
+    "circleci",
+    "argo"
+   ]
+  },
+  {
+   "name": "github actions",
+   "cat": "devops"
+  },
+  {
+   "name": "linux",
+   "cat": "devops",
+   "aliases": [
+    "linux",
+    "unix",
+    "linux/unix",
+    "ubuntu",
+    "rhel",
+    "centos"
+   ]
+  },
+  {
+   "name": "git",
+   "cat": "devops",
+   "aliases": [
+    "git",
+    "github",
+    "gitlab",
+    "bitbucket",
+    "version control"
+   ]
+  },
+  {
+   "name": "nginx",
+   "cat": "devops",
+   "aliases": [
+    "nginx",
+    "apache httpd",
+    "haproxy",
+    "envoy"
+   ]
+  },
+  {
+   "name": "prometheus",
+   "cat": "devops",
+   "aliases": [
+    "prometheus",
+    "grafana",
+    "datadog",
+    "splunk",
+    "opentelemetry"
+   ]
+  },
+  {
+   "name": "devops",
+   "cat": "devops",
+   "aliases": [
+    "devops",
+    "sre",
+    "site reliability"
+   ]
+  },
+  {
+   "name": "openshift",
+   "cat": "devops"
+  },
+  {
+   "name": "gdb",
+   "cat": "tool",
+   "aliases": [
+    "gdb",
+    "lldb",
+    "valgrind"
+   ]
+  },
+  {
+   "name": "cmake",
+   "cat": "tool",
+   "aliases": [
+    "cmake",
+    "makefile",
+    "makefiles",
+    "gnu make",
+    "bazel",
+    "gradle",
+    "maven"
+   ]
+  },
+  {
+   "name": "jira",
+   "cat": "tool",
+   "aliases": [
+    "jira",
+    "confluence"
+   ]
+  },
+  {
+   "name": "postman",
+   "cat": "tool",
+   "aliases": [
+    "postman",
+    "swagger",
+    "openapi"
+   ]
+  },
+  {
+   "name": "jupyter",
+   "cat": "tool",
+   "aliases": [
+    "jupyter",
+    "jupyter notebooks",
+    "colab"
+   ]
+  },
+  {
+   "name": "vs code",
+   "cat": "tool",
+   "aliases": [
+    "vs code",
+    "visual studio code",
+    "visual studio"
+   ]
+  },
+  {
+   "name": "selenium",
+   "cat": "tool",
+   "aliases": [
+    "selenium",
+    "playwright",
+    "cypress",
+    "puppeteer"
+   ]
+  },
+  {
+   "name": "pytest",
+   "cat": "tool",
+   "aliases": [
+    "pytest",
+    "junit",
+    "jest",
+    "mocha",
+    "unit testing",
+    "unit tests"
+   ]
+  },
+  {
+   "name": "figma",
+   "cat": "tool"
+  },
+  {
+   "name": "excel",
+   "cat": "tool",
+   "aliases": [
+    "excel",
+    "microsoft excel",
+    "google sheets"
+   ]
+  },
+  {
+   "name": "simulink",
+   "cat": "tool",
+   "aliases": [
+    "simulink",
+    "labview"
+   ]
+  },
+  {
+   "name": "autocad",
+   "cat": "tool",
+   "aliases": [
+    "autocad",
+    "solidworks"
+   ]
+  },
+  {
+   "name": "rest api",
+   "cat": "protocol",
+   "aliases": [
+    "rest",
+    "rest api",
+    "rest apis",
+    "restful",
+    "restful api",
+    "restful apis",
+    "restful services",
+    "http apis",
+    "web apis"
+   ]
+  },
+  {
+   "name": "grpc",
+   "cat": "protocol",
+   "aliases": [
+    "grpc",
+    "protobuf",
+    "protocol buffers"
+   ]
+  },
+  {
+   "name": "websockets",
+   "cat": "protocol",
+   "aliases": [
+    "websockets",
+    "websocket"
+   ]
+  },
+  {
+   "name": "oauth",
+   "cat": "protocol",
+   "aliases": [
+    "oauth",
+    "oauth2",
+    "oidc",
+    "openid connect",
+    "jwt",
+    "saml"
+   ]
+  },
+  {
+   "name": "tcp/ip",
+   "cat": "protocol",
+   "aliases": [
+    "tcp/ip",
+    "tcp",
+    "udp",
+    "sockets",
+    "socket programming"
+   ]
+  },
+  {
+   "name": "http",
+   "cat": "protocol",
+   "aliases": [
+    "http",
+    "https",
+    "http/2"
+   ]
+  },
+  {
+   "name": "json",
+   "cat": "protocol",
+   "aliases": [
+    "json",
+    "xml",
+    "yaml",
+    "protobuf"
+   ]
+  },
+  {
+   "name": "mqtt",
+   "cat": "protocol",
+   "aliases": [
+    "mqtt",
+    "can bus",
+    "modbus",
+    "i2c",
+    "spi",
+    "uart"
+   ]
+  },
+  {
+   "name": "ssh",
+   "cat": "protocol",
+   "aliases": [
+    "ssh",
+    "tls",
+    "ssl"
+   ]
+  },
+  {
+   "name": "freertos",
+   "cat": "framework",
+   "aliases": [
+    "freertos",
+    "rtos",
+    "zephyr",
+    "embedded linux"
+   ]
+  },
+  {
+   "name": "fpga",
+   "cat": "tool",
+   "aliases": [
+    "fpga",
+    "fpgas"
+   ]
+  },
+  {
+   "name": "hpc",
+   "cat": "data",
+   "aliases": [
+    "hpc",
+    "high performance computing",
+    "high-performance computing",
+    "mpi",
+    "openmp",
+    "slurm"
+   ]
+  },
+  {
+   "name": "sap",
+   "cat": "tool",
+   "aliases": [
+    "sap",
+    "sap products",
+    "sap s/4hana",
+    "sap hana"
+   ]
+  },
+  {
+   "name": "netsuite",
+   "cat": "tool",
+   "aliases": [
+    "netsuite",
+    "salesforce",
+    "servicenow",
+    "workday"
+   ]
+  },
+  {
+   "name": "arduino",
+   "cat": "tool",
+   "aliases": [
+    "arduino",
+    "raspberry pi",
+    "stm32",
+    "esp32"
+   ]
+  },
+  {
+   "name": "ollama",
+   "cat": "ml",
+   "aliases": [
+    "ollama",
+    "vllm",
+    "llama.cpp"
+   ]
+  }
+ ],
+ "kin": {
+  "_doc": "Boost groups: when any trigger is hit in the JD, the group's boost list (snapshot skills only, not already hit) is pulled forward as filler, in snapshot order. Explicit on purpose \u2014 category sharing was too coarse (every JD names a language).",
+  "web": {
+   "triggers": [
+    "react",
+    "next.js",
+    "node.js",
+    "vue",
+    "angular",
+    "svelte",
+    "express",
+    "django",
+    "flask",
+    "fastapi",
+    "rails",
+    "html/css",
+    "graphql",
+    "websockets",
+    "react native",
+    "flutter",
+    "typescript",
+    "javascript"
+   ],
+   "boost": [
+    "javascript",
+    "typescript",
+    "node.js",
+    "next.js",
+    "react",
+    "rest api",
+    "api design",
+    "authentication",
+    "oauth",
+    "webhooks",
+    "postgresql",
+    "sqlite",
+    "databases",
+    "testing"
+   ]
+  },
+  "ml": {
+   "triggers": [
+    "pytorch",
+    "tensorflow",
+    "keras",
+    "jax",
+    "scikit-learn",
+    "numpy",
+    "pandas",
+    "hugging face",
+    "langchain",
+    "large language models",
+    "rag",
+    "vector databases",
+    "embeddings",
+    "opencv",
+    "computer vision",
+    "nlp",
+    "mlflow",
+    "onnx",
+    "ollama",
+    "ray",
+    "cuda"
+   ],
+   "boost": [
+    "python",
+    "pytorch",
+    "tensorflow",
+    "scikit-learn",
+    "numpy",
+    "machine learning",
+    "computer vision",
+    "large language models",
+    "rag",
+    "embeddings",
+    "semantic search",
+    "vector databases",
+    "llm evaluation",
+    "information retrieval",
+    "retrieval",
+    "gcp"
+   ]
+  },
+  "systems": {
+   "triggers": [
+    "c",
+    "c++",
+    "rust",
+    "go",
+    "linux",
+    "gdb",
+    "freertos",
+    "assembly",
+    "tcp/ip",
+    "mqtt",
+    "arduino",
+    "fpga",
+    "verilog",
+    "cuda",
+    "cmake",
+    "llvm",
+    "bash"
+   ],
+   "boost": [
+    "c",
+    "rust",
+    "go",
+    "linux",
+    "gdb",
+    "valgrind",
+    "operating systems",
+    "systems programming",
+    "concurrency",
+    "networking",
+    "testing",
+    "data structures & algorithms",
+    "git",
+    "docker"
+   ]
+  },
+  "data": {
+   "triggers": [
+    "sql",
+    "spark",
+    "hadoop",
+    "kafka",
+    "airflow",
+    "dbt",
+    "snowflake",
+    "databricks",
+    "bigquery",
+    "redshift",
+    "flink",
+    "etl",
+    "tableau",
+    "excel",
+    "postgresql",
+    "mysql",
+    "mongodb",
+    "redis",
+    "dynamodb",
+    "cassandra",
+    "elasticsearch",
+    "oracle",
+    "sql server",
+    "nosql",
+    "amazon sqs"
+   ],
+   "boost": [
+    "sql",
+    "python",
+    "postgresql",
+    "sqlite",
+    "databases",
+    "etl",
+    "data analysis",
+    "nosql",
+    "gcp"
+   ]
+  },
+  "cloud": {
+   "triggers": [
+    "aws",
+    "gcp",
+    "microsoft azure",
+    "docker",
+    "kubernetes",
+    "terraform",
+    "ci-cd",
+    "github actions",
+    "prometheus",
+    "devops",
+    "serverless",
+    "nginx",
+    "openshift",
+    "cloudflare",
+    "vercel"
+   ],
+   "boost": [
+    "docker",
+    "gcp",
+    "microsoft azure",
+    "ci-cd",
+    "linux",
+    "git",
+    "devops",
+    "observability",
+    "serverless",
+    "testing"
+   ]
+  },
+  "java": {
+   "triggers": [
+    "java",
+    "kotlin",
+    "spring",
+    "scala",
+    ".net",
+    "c#"
+   ],
+   "boost": [
+    "java",
+    "rest api",
+    "api design",
+    "databases",
+    "testing",
+    "postgresql"
+   ]
+  }
+ },
+ "concept_terms": {
+  "_doc": "Concept phrases matched ONLY against JD text (never from chips), kept only if in snapshot.verified (apply-skills places them in the Concepts row). Weight 1 per mention, +3 in requirements, ranked after concrete hits.",
+  "terms": [
+   {
+    "name": "distributed systems",
+    "aliases": [
+     "distributed systems",
+     "distributed computing"
+    ]
+   },
+   {
+    "name": "operating systems",
+    "aliases": [
+     "operating systems",
+     "os internals",
+     "kernel"
+    ]
+   },
+   {
+    "name": "concurrency",
+    "aliases": [
+     "concurrency",
+     "concurrent programming",
+     "multithreading",
+     "multi-threading",
+     "multithreaded",
+     "parallel programming"
+    ]
+   },
+   {
+    "name": "systems programming",
+    "aliases": [
+     "systems programming",
+     "low-level programming",
+     "low level programming"
+    ]
+   },
+   {
+    "name": "networking",
+    "aliases": [
+     "networking",
+     "computer networking",
+     "network protocols",
+     "network programming"
+    ]
+   },
+   {
+    "name": "data structures & algorithms",
+    "aliases": [
+     "data structures and algorithms",
+     "data structures & algorithms",
+     "algorithms and data structures",
+     "data structures",
+     "algorithms"
+    ]
+   },
+   {
+    "name": "machine learning",
+    "aliases": [
+     "machine learning",
+     "deep learning",
+     "neural networks"
+    ]
+   },
+   {
+    "name": "computer vision",
+    "aliases": [
+     "computer vision"
+    ]
+   },
+   {
+    "name": "large language models",
+    "aliases": [
+     "large language models",
+     "llms",
+     "llm",
+     "generative ai",
+     "genai"
+    ]
+   },
+   {
+    "name": "rag",
+    "aliases": [
+     "retrieval-augmented generation",
+     "retrieval augmented generation",
+     "rag"
+    ]
+   },
+   {
+    "name": "embeddings",
+    "aliases": [
+     "embeddings"
+    ]
+   },
+   {
+    "name": "semantic search",
+    "aliases": [
+     "semantic search"
+    ]
+   },
+   {
+    "name": "vector databases",
+    "aliases": [
+     "vector database",
+     "vector databases",
+     "vector search"
+    ]
+   },
+   {
+    "name": "llm evaluation",
+    "aliases": [
+     "llm evaluation",
+     "model evaluation",
+     "evals"
+    ]
+   },
+   {
+    "name": "information retrieval",
+    "aliases": [
+     "information retrieval",
+     "search systems"
+    ]
+   },
+   {
+    "name": "rest api",
+    "aliases": [
+     "rest apis",
+     "restful apis",
+     "rest api",
+     "web apis",
+     "apis"
+    ]
+   },
+   {
+    "name": "api design",
+    "aliases": [
+     "api design"
+    ]
+   },
+   {
+    "name": "authentication",
+    "aliases": [
+     "authentication",
+     "user authentication",
+     "auth flows",
+     "login flows"
+    ]
+   },
+   {
+    "name": "oauth",
+    "aliases": [
+     "oauth",
+     "oauth2",
+     "single sign-on",
+     "sso"
+    ]
+   },
+   {
+    "name": "webhooks",
+    "aliases": [
+     "webhooks"
+    ]
+   },
+   {
+    "name": "databases",
+    "aliases": [
+     "databases",
+     "database design",
+     "relational databases",
+     "database systems"
+    ]
+   },
+   {
+    "name": "testing",
+    "aliases": [
+     "unit testing",
+     "integration testing",
+     "test automation",
+     "test-driven",
+     "tdd",
+     "automated testing",
+     "software testing",
+     "testing frameworks"
+    ]
+   },
+   {
+    "name": "ci-cd",
+    "aliases": [
+     "ci/cd",
+     "continuous integration",
+     "continuous delivery",
+     "continuous deployment"
+    ]
+   },
+   {
+    "name": "agile",
+    "aliases": [
+     "agile",
+     "scrum"
+    ]
+   },
+   {
+    "name": "code review",
+    "aliases": [
+     "code review",
+     "code reviews"
+    ]
+   },
+   {
+    "name": "functional programming",
+    "aliases": [
+     "functional programming"
+    ]
+   },
+   {
+    "name": "web development",
+    "aliases": [
+     "web development",
+     "full-stack",
+     "full stack",
+     "fullstack",
+     "front-end",
+     "frontend",
+     "back-end",
+     "backend"
+    ]
+   },
+   {
+    "name": "microservices",
+    "aliases": [
+     "microservices",
+     "service-oriented"
+    ]
+   },
+   {
+    "name": "observability",
+    "aliases": [
+     "observability",
+     "monitoring and alerting",
+     "distributed tracing"
+    ]
+   },
+   {
+    "name": "scalability",
+    "aliases": [
+     "scalability",
+     "scalable systems",
+     "high availability"
+    ]
+   },
+   {
+    "name": "object-oriented programming",
+    "aliases": [
+     "object-oriented",
+     "object oriented",
+     "oop"
+    ]
+   }
+  ]
+ }
+}
