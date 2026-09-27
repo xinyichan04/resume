@@ -46,12 +46,24 @@ def _alias_re(a):
     return lead + re.escape(a) + tail
 
 
+# Python's re needs fixed-width look-behinds; these three lexicon patterns use JS variable-width ones.
+_SEP = r"(?:(?<=[,/])|(?<=[,/] )|(?<=[,/]  ))"
+PY_PATTERNS = {
+    "c": r"\bC(?=\s*[,/]\s*(?:C\+\+|Java|Python|Rust|Go|C#|Fortran)|\s+(?:programming|language)\b|\s+(?:and|or)\s+(?:C\+\+|Rust|Python|Java|assembly))"
+         r"|(?:(?<=C\+\+[,/])|(?<=C\+\+[,/] )|(?<=C\+\+ [,/] ))C\b"
+         r"|(?:(?<=embedded )|(?<=\bin )|(?<=with )|(?<=using ))C\b(?=[\s,.)])",
+    "go": r"\bGolang\b|\bGo\b(?=\s*[,/)]|\s+(?:programming|language|lang)\b|\s+(?:and|or)\s+[A-Z])"
+          r"|" + _SEP + r"Go\b|(?:(?<=\bin )|(?<=with )|(?<=using )|(?<=\bof ))Go\b",
+    "r": r"\bR\b(?=\s*[,/)]|\s+(?:programming|language|studio|shiny)\b|\s+(?:and|or)\s+[A-Z])|" + _SEP + r"R\b",
+}
+
+
 def build_terms():
     """term key -> compiled regex. Lexicon entries plus bank-only aliases."""
     terms = {}
     for e in LEX["entries"]:
         if e.get("pattern"):
-            terms[e["name"]] = re.compile(e["pattern"])
+            terms[e["name"]] = re.compile(PY_PATTERNS.get(e["name"], e["pattern"]))
         else:
             terms[e["name"]] = re.compile("|".join(_alias_re(a) for a in e.get("aliases", [e["name"]])), re.I)
     for row in BANK["rows"].values():
@@ -73,31 +85,45 @@ def bank_keys(s):
     return keys
 
 
-REQ_H = re.compile(r"(required|minimum|basic|must[- ]have|what you('ll)? need|requirements|qualifications|"
-                   r"who you are|you have|skills)", re.I)
+REQ_H = re.compile(r"(required|minimum|basic|must[- ]have|what you('ll)? (need|bring)|you bring|requirements|qualifications|"
+                   r"who you are|you have|you'll have|what we expect|ideal candidate|looking for|skills|about you)", re.I)
 PREF_H = re.compile(r"(preferred|nice[- ]to[- ]have|bonus|plus|desired|ideally)", re.I)
-OTHER_H = re.compile(r"(responsibilit|what you('ll)? do|about (us|the)|benefits|perks|the role|day to day|compensation)", re.I)
+LEARN_H = re.compile(r"(what you('ll| will)? (learn|gain)|you('ll| will) learn|we offer|benefits|perks|compensation)", re.I)
+OTHER_H = re.compile(r"(responsibilit|what you('ll| will)? do|about (us|the)|the role|day to day|teams?/work|focus areas)", re.I)
+LINE_REQ = re.compile(r"^\W*(required|must|excellent|strong|proficien)", re.I)
+LINE_PREF = re.compile(r"^\W*(preferred|bonus|nice|plus|desired|recommended|familiarity)", re.I)
+URL = re.compile(r"https?://\S+|www\.\S+")
 
 
-def jd_weights(jd):
-    """term -> weight. Section headings decide the multiplier for the lines under them."""
+def jd_weights(jd, company=""):
+    """term -> weight. The heading above a line sets its multiplier: requirements x3, preferred x1.5,
+    responsibilities/other x1, 'what you'll learn'/benefits x0.5. A line's own lead word ("Required",
+    "Preferred", "Bonus") overrides. Each repeat adds 0.25. The company's own name is never a skill."""
     weights, section = {}, 1.0
+    own = re.compile(_alias_re(company.strip()), re.I) if company.strip() else None
     for line in jd.splitlines():
-        s = line.strip()
+        s = URL.sub(" ", line).strip()
         if not s:
             continue
         if len(s) < 70 and not s.startswith(("-", "*", "•")):
-            if PREF_H.search(s):
+            if LEARN_H.search(s):
+                section = 0.5
+            elif PREF_H.search(s):
                 section = 1.5
             elif REQ_H.search(s):
                 section = 3.0
             elif OTHER_H.search(s):
                 section = 1.0
+            elif s.isupper() or s.endswith(":"):
+                section = 1.0
+        w = 3.0 if LINE_REQ.search(s) else 1.5 if LINE_PREF.search(s) else section
+        if section == 0.5 and not LINE_REQ.search(s):
+            w = 0.5
         for k, rx in TERMS.items():
-            n = len(rx.findall(s))
-            if n:
-                w = section if k not in weights else 0.25 * n
-                weights[k] = weights.get(k, 0) + max(w, section if k not in weights else 0)
+            hits = rx.findall(s)
+            if not hits or (own and all(own.fullmatch(h if isinstance(h, str) else h[0]) for h in hits)):
+                continue
+            weights[k] = max(weights.get(k, 0), w) + (0.25 * len(hits) if k in weights else 0.25 * (len(hits) - 1))
     return weights
 
 
@@ -232,7 +258,7 @@ def show(branch, path):
 
 def cmd_tailor(a):
     jd = open(a.jd).read()
-    weights = jd_weights(jd)
+    weights = jd_weights(jd, a.company)
     track, track_scores = (a.track, None) if a.track != "auto" else pick_track(jd, weights)
     base = "main" if track == "swe" and not git("branch", "--list", "swe") else track
 
@@ -274,6 +300,7 @@ def cmd_tailor(a):
             "dropped_for_space": dropped,
             "missing_in_bank": [pretty(k) for k in missing if k in bank_all],
             "missing_not_in_bank": [pretty(k) for k in missing if k not in bank_all],
+            "score_max_possible": round(100 * sum(w for k, w in weights.items() if k in present or k in bank_all) / (sum(weights.values()) or 1), 1),
             "pages": 1,
         }
         if a.dry_run:

@@ -1,0 +1,113 @@
+Software Engineer Intern (Database Engineering) - Spring 2027
+At Snowflake, we are powering the era of the agentic enterprise. To usher in this new era, we seek AI-native thinkers across every function who are energized by the opportunity to reinvent how they work. You don’t just use tools; you possess an innate curiosity, treating AI as a high-trust collaborator that is core to how you solve problems and accelerate your impact. We look for low-ego individuals who thrive in dynamic and fast-moving environments and move with an experimental mindset — who rapidly test emerging capabilities to discover simpler, more powerful ways to deliver results. At Snowflake, your role isn't just to execute a function, but to help redefine the future of how work gets done.
+
+
+SOFTWARE ENGINEER INTERN (DATABASE ENGINEERING) - SPRING 2027
+
+
+
+Snowflake started with a clear vision: develop a cloud data platform that is effective, affordable, and accessible to all data users. Snowflake developed an innovative new product with a built-for-the-cloud architecture that combines the power of data warehousing, the flexibility of big data platforms, and the elasticity of the cloud at a fraction of the cost of traditional solutions. We are now a global, world-class organization with offices in more than a dozen countries and serving many more.
+
+We're looking for dedicated students who share our passion for ground-breaking technology and want to create a lasting future for you and Snowflake.
+
+
+
+
+WHAT WE OFFER:
+
+ - Paid, full-time internships in the heart of the software industry
+
+ - Exposure to a fast-paced, fun and inclusive culture
+
+ - A chance to work with world-class experts on challenging projects
+
+ - Opportunity to provide meaningful contributions to a real system used by customers
+
+ - High level of access to supervisors (manager and mentor), detailed direction without micromanagement, feedback throughout your internship, and a final evaluation
+
+ - Stuff that matters: treated as a member of the Snowflake team, included in company meetings/activities, flexible hours, casual dress code, accommodations to work from home, swag and much more
+
+ - When return to office in effect, catered lunches, access to gaming consoles, recreational games, happy hours, company outings, and more
+   
+   
+
+
+WHAT WE EXPECT:
+
+ - Must be actively enrolled in an accredited college/university program during the time of the internship
+
+ - Desired class level: 3rd/4th year Undergraduates, Masters, or PhD
+
+ - Desired majors: Computer Science, Computer Engineering, Electrical Engineering, Physics, Math, or related field
+
+ - Required coursework: algorithms, data structures, software engineering, and operating systems
+
+ - Recommended coursework: cloud computing, compilers, database systems, distributed systems, functional PL, networking
+
+ - Bonus experience: research or publications in databases or distributed systems, and contributions to open source
+
+ - Experience working with big data (engineering / processing)
+
+ - When: Spring 2027
+
+ - Eligible start date options: January 4, 2027; January 19, 2027
+
+ - Eligible end date options: March 26, 2027; April 9, 2027; May 7, 2027
+
+ - Duration: 12 week minimum, 16 weeks recommended (12 month maximum)
+
+ - Excellent programming skills in C++ or Java
+
+ - Preferred knowledge of C++20 or C++17, Java 20 or Java 17
+
+ - Knowledge of data structures and algorithms
+
+ - Systems programming skills including multi-threading, concurrency, etc.
+
+ - Strong problem solving and ability to learn quickly in a dynamic environment
+
+ - Experience with working as a part of a team
+
+ - Dedication and passion for technology
+   
+   
+
+
+WHAT YOU WILL LEARN/GAIN:
+
+ - How to build enterprise grade, reliable, and trustworthy software/services
+
+ - Exposure to SQL or other database technologies (e.g., Spark, Hadoop)
+
+ - Understanding of database internals, large-scale data processing, transaction processing, distributed systems, and data warehouse design
+
+ - Implementation, testing of features in query compilation, compiler design, query execution
+
+ - Experience working with cloud infrastructure, AWS, Azure, and/or Google Cloud in particular
+
+ - Learning about cutting edge database technology and research
+   
+   
+
+
+POSSIBLE TEAMS/WORK FOCUS AREAS:
+
+ - Various spaces within Database Query Engine (such as the compiler, query optimization, query execution & performance, SQL frameworks, etc.), FoundationDB key-value store (FDB storage, FDB Performance, etc.), and Hybrid Transactional & Analytical Processing (Unistore)
+
+ - High performance large-scale data processing
+
+ - Large-scale distributed systems
+
+ - Software-as-a-Service platform
+
+ - Software frameworks for stability and performance testing
+
+
+
+Every Snowflake employee is expected to follow the company's confidentiality and security standards for handling sensitive data. Snowflake employees must abide by the company's data security plan as an essential part of their duties. It is every employee's duty to keep customer information secure and confidential.
+
+Snowflake is growing fast, and we’re scaling our team to help enable and accelerate our growth. We are looking for people who share our values, challenge ordinary thinking, and push the pace of innovation while building a future for themselves and Snowflake.
+
+How do you want to make your impact?
+
+For jobs located in the United States, please visit the job posting on the Snowflake Careers Site for salary and benefits information: careers.snowflake.com http://careers.snowflake.com

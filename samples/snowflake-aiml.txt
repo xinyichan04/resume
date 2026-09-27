@@ -1,0 +1,99 @@
+Software Engineer Intern (AI / ML) - Spring 2027
+At Snowflake, we are powering the era of the agentic enterprise. To usher in this new era, we seek AI-native thinkers across every function who are energized by the opportunity to reinvent how they work. You don’t just use tools; you possess an innate curiosity, treating AI as a high-trust collaborator that is core to how you solve problems and accelerate your impact. We look for low-ego individuals who thrive in dynamic and fast-moving environments and move with an experimental mindset — who rapidly test emerging capabilities to discover simpler, more powerful ways to deliver results. At Snowflake, your role isn't just to execute a function, but to help redefine the future of how work gets done.
+
+
+SOFTWARE ENGINEER INTERN (AI / ML) - SPRING 2027
+
+
+Snowflake started with a clear vision: develop a cloud data platform that is effective, affordable, and accessible to all data users. Snowflake developed an innovative new product with a built-for-the-cloud architecture that combines the power of data warehousing, the flexibility of big data platforms, and the elasticity of the cloud at a fraction of the cost of traditional solutions. We are now a world-class organization with offices in more than a dozen countries and serving many more.
+
+Expanding on Snowflake's trust promise and with the explosion of language models, we will democratize the ability to easily glean insights from massive amounts of structured and unstructured data using AI and natural language, from running powerful batch analysis to accurately answering interactive questions about any type of data.
+
+We're looking for dedicated students who share our passion for groundbreaking technology and want to create a lasting future for Snowflake and you.
+
+
+
+WHAT WE OFFER:
+
+ - Paid, full-time internships in the heart of the software industry
+
+ - Exposure to a fast-paced, fun, and inclusive culture
+
+ - A chance to work with world-class experts on challenging projects
+
+ - Opportunity to provide meaningful contributions to a real system used by customers
+
+ - High level of access to supervisors (manager and mentor), detailed direction without micromanagement, feedback throughout your internship, and a final evaluation
+
+ - Stuff that matters: treated as a member of the Snowflake team, included in company meetings/activities, flexible hours, casual dress code, accommodations to work from home, swag, and much more
+
+ - Catered lunches, access to gaming consoles, recreational games, happy hours, company outings, and more
+   
+
+
+WHAT WE EXPECT:
+
+ - Must be actively enrolled in an accredited college/university program during the time of the internship
+
+ - Desired class level: Masters, or PhD
+
+ - Desired majors: Computer Science, Computer Engineering, Electrical Engineering, Physics, Math, or related field
+
+ - Recommended coursework: artificial intelligence, machine learning, deep learning, federated learning, efficient LLMs, information retrieval, predictive & generative modeling, natural language processing, differential privacy, cloud computing, distributed & operating systems
+
+ - Research or publications in AI, ML, NLP, or CV or major contributions to open source
+
+ - When: Spring 2027
+
+ - Eligible start date options: January 4, 2027; January 19, 2027
+
+ - Eligible end date options: March 26, 2027; April 9, 2027; May 7, 2027
+
+ - Duration: 12-16 weeks recommended, more than 16 weeks also encouraged (12 month maximum)
+
+ - Excellent programming skills in Python, Golang, and Java
+
+ - Preferred knowledge of PyTorch or CUDA
+
+ - Experience with working as a part of a team
+
+ - Dedication and passion for technology
+   
+
+
+WHAT YOU WILL LEARN/GAIN:
+
+ - Engineering for Scale: Learn to build highly integrated, secure, and scalable products that enable end-to-end ML workflows
+
+ - Agentic Workflows: Gain experience with agentic testing, iteration, and managing complex workflows for SQL generation
+
+ - Evaluation & Trust: Understand how to build evaluation loops to measure the groundedness, reliability, and safety of AI-powered features
+
+ - Multimodal Data Processing: Learn how to apply AI operations natively to both structured and unstructured data within a cloud database
+
+ - High-Performance Research: Gain exposure to hardware performance optimization to achieve better LLM throughput
+   
+
+
+POSSIBLE TEAMS/WORK FOCUS AREAS:
+
+ - Applied AI: Building production-grade AI systems (agents, RAG pipelines, LLM integrations) and deploying them with strategic customers
+
+ - ML Platform: Developing infrastructure for feature stores, MLOps, and highly optimized runtimes for both structured and unstructured data
+
+ - LLM Products & Snowflake Intelligence: Creating AI systems that reason over governed data and shipping features like design prompts and agent workflows
+
+ - AI Migrations (Agents for Code): Building intelligent agents to automate SQL code conversion and data migrations using Java, Go, and LangGraph
+
+ - Cortex Search, Analyst & Agents: Developing low-latency fuzzy search (Cortex Search), natural language interfaces for business questions (Cortex Analyst), and custom AI agents
+
+ - Cortex AI in SQL: Integrating generative AI directly into database queries to handle multimodal data natively
+   
+
+Every Snowflake employee is expected to follow the company's confidentiality and security standards for handling sensitive data. Snowflake employees must abide by the company's data security plan as an essential part of their duties. It is every employee's duty to keep customer information secure and confidential.
+
+Snowflake is growing fast, and we’re scaling our team to help enable and accelerate our growth. We are looking for people who share our values, challenge ordinary thinking, and push the pace of innovation while building a future for themselves and Snowflake.
+
+How do you want to make your impact?
+
+For jobs located in the United States, please visit the job posting on the Snowflake Careers Site for salary and benefits information: careers.snowflake.com http://careers.snowflake.com
