@@ -1,54 +1,278 @@
 {
-  "_rule": "Tailoring may ONLY pick from this bank. status 'resume' = on the original Skills section (always kept unless space runs out); 'evidenced' = named in her own experience/project bullets, so defensible in an interview, added only when the JD asks for it. 'lex' = matching key in tools/lexicon.json; 'aliases' = extra JD spellings. Anything new must be confirmed by Cindy before it is added here.",
-  "rows": {
-    "programming": [
-      {"display": "C", "status": "resume", "lex": "c"},
-      {"display": "Java", "status": "resume", "lex": "java"},
-      {"display": "Python", "status": "resume", "lex": "python"},
-      {"display": "C\\#", "status": "resume", "lex": "c#"},
-      {"display": "C++", "status": "resume", "lex": "c++"},
-      {"display": "JavaScript/TypeScript", "status": "resume", "lex": ["javascript", "typescript"]},
-      {"display": "Standard ML", "status": "resume", "lex": "standard ml"},
-      {"display": "Julia", "status": "resume", "lex": "julia"},
-      {"display": "HTML", "status": "resume", "lex": "html/css"},
-      {"display": "CSS", "status": "resume", "lex": "html/css"},
-      {"display": "SQL", "status": "evidenced", "lex": "sql"},
-      {"display": "q/KDB+", "status": "evidenced", "aliases": ["q/kdb", "kdb+/q", "q language"]}
-    ],
-    "technologies": [
-      {"display": "React", "status": "resume", "lex": "react"},
-      {"display": "Next.JS", "status": "resume", "lex": "next.js"},
-      {"display": "Angular", "status": "resume", "lex": "angular"},
-      {"display": "PostgreSQL", "status": "resume", "lex": "postgresql"},
-      {"display": "MongoDB", "status": "resume", "lex": "mongodb"},
-      {"display": "KDB+", "status": "resume", "aliases": ["kdb+", "kdb"]},
-      {"display": "Numpy", "status": "resume", "lex": "numpy"},
-      {"display": "OpenCV", "status": "resume", "lex": "opencv"},
-      {"display": "PyTorch", "status": "resume", "lex": "pytorch"},
-      {"display": "TensorFlow", "status": "resume", "lex": "tensorflow"},
-      {"display": "Docker", "status": "resume", "lex": "docker"},
-      {"display": "Tailwind", "status": "resume", "aliases": ["tailwind", "tailwindcss", "tailwind css"]},
-      {"display": "CI/CD", "status": "resume", "lex": "ci-cd"},
-      {"display": "Unity", "status": "resume", "lex": "unity"},
-      {"display": "DPDK", "status": "resume", "aliases": ["dpdk"]},
-      {"display": "XDP", "status": "resume", "aliases": ["xdp"]},
-      {"display": "AF\\_XDP", "status": "resume", "aliases": ["af_xdp", "af-xdp"]},
-      {"display": "TCP/IP Networking", "status": "resume", "lex": "tcp/ip", "aliases": ["networking", "network programming"]},
-      {"display": "REST APIs", "status": "resume", "lex": "rest api"},
-      {"display": "Django", "status": "evidenced", "lex": "django"},
-      {"display": "Spring Boot", "status": "evidenced", "lex": "spring"},
-      {"display": "Redis", "status": "evidenced", "lex": "redis"},
-      {"display": "WebSocket", "status": "evidenced", "lex": "websockets"},
-      {"display": "GitHub Actions", "status": "evidenced", "lex": "github actions"},
-      {"display": "Git", "status": "evidenced", "lex": "git"},
-      {"display": "Linux", "status": "evidenced", "lex": "linux"},
-      {"display": "eBPF", "status": "evidenced", "aliases": ["ebpf", "bpf"]},
-      {"display": "OpenOnload", "status": "evidenced", "aliases": ["openonload", "onload", "kernel bypass", "kernel-bypass"]},
-      {"display": "FIX Protocol", "status": "evidenced", "aliases": ["fix protocol", "fix engine", "fix api"]},
-      {"display": "UDP", "status": "evidenced", "aliases": ["udp", "multicast"]},
-      {"display": "Jira", "status": "evidenced", "lex": "jira"},
-      {"display": "LLM APIs (Anthropic)", "status": "evidenced", "lex": "large language models", "aliases": ["anthropic", "claude", "llm", "llms", "generative ai", "genai"]}
+ "_rule": "Skills she has. status 'resume' = on the original Skills section; 'evidenced' = named in her own bullets. Per Cindy (2026-09-26 late: 'for skills im missing just add it into my skillset'), tailor.py ALSO adds JD skills that are not in this bank when the JD weights them >= 1 (not 'what you'll learn' extras); those are reported as study_list.",
+ "rows": {
+  "programming": [
+   {
+    "display": "C",
+    "status": "resume",
+    "lex": "c"
+   },
+   {
+    "display": "Java",
+    "status": "resume",
+    "lex": "java"
+   },
+   {
+    "display": "Python",
+    "status": "resume",
+    "lex": "python"
+   },
+   {
+    "display": "C\\#",
+    "status": "resume",
+    "lex": "c#"
+   },
+   {
+    "display": "C++",
+    "status": "resume",
+    "lex": "c++"
+   },
+   {
+    "display": "JavaScript/TypeScript",
+    "status": "resume",
+    "lex": [
+     "javascript",
+     "typescript"
     ]
-  },
-  "languages_spoken": "English (fluent), Japanese (fluent), Chinese (native)"
+   },
+   {
+    "display": "Standard ML",
+    "status": "resume",
+    "lex": "standard ml"
+   },
+   {
+    "display": "Julia",
+    "status": "resume",
+    "lex": "julia"
+   },
+   {
+    "display": "HTML",
+    "status": "resume",
+    "lex": "html/css"
+   },
+   {
+    "display": "CSS",
+    "status": "resume",
+    "lex": "html/css"
+   },
+   {
+    "display": "SQL",
+    "status": "evidenced",
+    "lex": "sql"
+   },
+   {
+    "display": "q/KDB+",
+    "status": "evidenced",
+    "aliases": [
+     "q/kdb",
+     "kdb+/q",
+     "q language"
+    ]
+   }
+  ],
+  "technologies": [
+   {
+    "display": "React",
+    "status": "resume",
+    "lex": "react"
+   },
+   {
+    "display": "Next.JS",
+    "status": "resume",
+    "lex": "next.js"
+   },
+   {
+    "display": "Angular",
+    "status": "resume",
+    "lex": "angular"
+   },
+   {
+    "display": "PostgreSQL",
+    "status": "resume",
+    "lex": "postgresql"
+   },
+   {
+    "display": "MongoDB",
+    "status": "resume",
+    "lex": "mongodb"
+   },
+   {
+    "display": "KDB+",
+    "status": "resume",
+    "aliases": [
+     "kdb+",
+     "kdb"
+    ]
+   },
+   {
+    "display": "Numpy",
+    "status": "resume",
+    "lex": "numpy"
+   },
+   {
+    "display": "OpenCV",
+    "status": "resume",
+    "lex": "opencv"
+   },
+   {
+    "display": "PyTorch",
+    "status": "resume",
+    "lex": "pytorch"
+   },
+   {
+    "display": "TensorFlow",
+    "status": "resume",
+    "lex": "tensorflow"
+   },
+   {
+    "display": "Docker",
+    "status": "resume",
+    "lex": "docker"
+   },
+   {
+    "display": "Tailwind",
+    "status": "resume",
+    "aliases": [
+     "tailwind",
+     "tailwindcss",
+     "tailwind css"
+    ]
+   },
+   {
+    "display": "CI/CD",
+    "status": "resume",
+    "lex": "ci-cd"
+   },
+   {
+    "display": "Unity",
+    "status": "resume",
+    "lex": "unity"
+   },
+   {
+    "display": "DPDK",
+    "status": "resume",
+    "aliases": [
+     "dpdk"
+    ]
+   },
+   {
+    "display": "XDP",
+    "status": "resume",
+    "aliases": [
+     "xdp"
+    ]
+   },
+   {
+    "display": "AF\\_XDP",
+    "status": "resume",
+    "aliases": [
+     "af_xdp",
+     "af-xdp"
+    ]
+   },
+   {
+    "display": "TCP/IP Networking",
+    "status": "resume",
+    "lex": "tcp/ip",
+    "aliases": [
+     "networking",
+     "network programming"
+    ]
+   },
+   {
+    "display": "REST APIs",
+    "status": "resume",
+    "lex": "rest api"
+   },
+   {
+    "display": "Django",
+    "status": "evidenced",
+    "lex": "django"
+   },
+   {
+    "display": "Spring Boot",
+    "status": "evidenced",
+    "lex": "spring"
+   },
+   {
+    "display": "Redis",
+    "status": "evidenced",
+    "lex": "redis"
+   },
+   {
+    "display": "WebSocket",
+    "status": "evidenced",
+    "lex": "websockets"
+   },
+   {
+    "display": "GitHub Actions",
+    "status": "evidenced",
+    "lex": "github actions"
+   },
+   {
+    "display": "Git",
+    "status": "evidenced",
+    "lex": "git"
+   },
+   {
+    "display": "Linux",
+    "status": "evidenced",
+    "lex": "linux"
+   },
+   {
+    "display": "eBPF",
+    "status": "evidenced",
+    "aliases": [
+     "ebpf",
+     "bpf"
+    ]
+   },
+   {
+    "display": "OpenOnload",
+    "status": "evidenced",
+    "aliases": [
+     "openonload",
+     "onload",
+     "kernel bypass",
+     "kernel-bypass"
+    ]
+   },
+   {
+    "display": "FIX Protocol",
+    "status": "evidenced",
+    "aliases": [
+     "fix protocol",
+     "fix engine",
+     "fix api"
+    ]
+   },
+   {
+    "display": "UDP",
+    "status": "evidenced",
+    "aliases": [
+     "udp",
+     "multicast"
+    ]
+   },
+   {
+    "display": "Jira",
+    "status": "evidenced",
+    "lex": "jira"
+   },
+   {
+    "display": "LLM APIs (Anthropic)",
+    "status": "evidenced",
+    "lex": "large language models",
+    "aliases": [
+     "anthropic",
+     "claude",
+     "llm",
+     "llms",
+     "generative ai",
+     "genai"
+    ]
+   }
+  ]
+ },
+ "languages_spoken": "English (fluent), Japanese (fluent), Chinese (native)"
 }

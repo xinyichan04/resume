@@ -5,7 +5,7 @@ LaTeX source of the résumé, with git as its version history.
 ## Layout
 - `resume.tex`: the résumé (layout matches the original Word file: Letter, Times 10pt, 0.3"/0.5" margins).
 - `skills.tex`: the **Skills** section. It's the only part tailoring rewrites.
-- `skills-bank.json`: every skill tailoring is allowed to use. Nothing outside this list is ever added.
+- `skills-bank.json`: the skills she has. Tailoring also adds skills the JD requires that she has not listed (Cindy, 2026-09-26); each report lists those as a study list for interview prep.
 
 ## Branches
 | branch | use |

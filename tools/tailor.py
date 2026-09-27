@@ -188,9 +188,35 @@ def row_items(skills_tex, label):
     return [x.strip() for x in m.group(1).split(",")] if m else []
 
 
-def plan_rows(track_skills_tex, weights):
-    """row -> ordered list of bank entries (+ their JD weight)."""
+# Cindy 09-26 late: "for skills im missing just add it into my skillset". JD skills outside the bank are
+# added too (status 'jd-added'), as long as the JD weights them >= ADD_MIN (so "what you'll learn" extras
+# at x0.5 are not added). They are listed in the report as study_list so she can prep before interviews.
+ADD_MIN = 1.0
+DISPLAY = {"aws": "AWS", "gcp": "GCP", "microsoft azure": "Azure", "nlp": "NLP", "rag": "RAG", "cuda": "CUDA",
+           "langchain": "LangChain", "kubernetes": "Kubernetes", "go": "Go", "sql": "SQL", "nosql": "NoSQL",
+           "graphql": "GraphQL", "grpc": "gRPC", "fastapi": "FastAPI", "node.js": "Node.js", "vue": "Vue",
+           "scikit-learn": "scikit-learn", "hugging face": "Hugging Face", "large language models": "LLMs",
+           "html/css": "HTML/CSS", "ci-cd": "CI/CD", "rest api": "REST APIs", "tcp/ip": "TCP/IP", "http": "HTTP",
+           "json": "JSON", "mqtt": "MQTT", "ssh": "SSH", "hpc": "HPC", "etl": "ETL", "dbt": "dbt", "ios": "iOS",
+           "swiftui": "SwiftUI", "mysql": "MySQL", "sqlite": "SQLite", "dynamodb": "DynamoDB", "bigquery": "BigQuery",
+           "mlflow": "MLflow", "onnx": "ONNX", "llvm": "LLVM", "gdb": "GDB", "cmake": "CMake", "vs code": "VS Code",
+           "pytest": "pytest", "objective-c": "Objective-C", "c#": "C\\#", "c++": "C++", "php": "PHP",
+           "matlab": "MATLAB", "sap": "SAP", "fpga": "FPGA", "amazon sqs": "Amazon SQS", "jax": "JAX",
+           "xgboost": "XGBoost", "openshift": "OpenShift", "vector databases": "Vector Databases",
+           ".net": ".NET", "react native": "React Native", "unreal engine": "Unreal Engine", "ros": "ROS",
+           "qt": "Qt", "r": "R", "c": "C", "sql server": "SQL Server", "freertos": "FreeRTOS", "ollama": "Ollama"}
+LEX_CAT = {e["name"]: e["cat"] for e in LEX["entries"]}
+
+
+def disp(name):
+    return DISPLAY.get(name, name.title() if name.islower() and " " in name else name[:1].upper() + name[1:])
+
+
+def plan_rows(track_skills_tex, weights, add_missing=True):
+    """row -> ordered list of (entry, JD weight, base position). Bank entries first; then JD skills she
+    does not list yet (add_missing), placed in Programming for languages, Technologies otherwise."""
     rows = {}
+    covered = {k for row in BANK["rows"].values() for e in row for k in bank_keys(e)}
     for row, entries in BANK["rows"].items():
         base_order = row_items(track_skills_tex, ROW_LABEL[row])
         chosen = []
@@ -199,6 +225,12 @@ def plan_rows(track_skills_tex, weights):
             if s["status"] == "resume" or w > 0:
                 pos = base_order.index(s["display"]) if s["display"] in base_order else 999
                 chosen.append((s, w, pos))
+        if add_missing:
+            for k, w in weights.items():
+                if k in covered or k.startswith("bank:") or w < ADD_MIN:
+                    continue
+                if (LEX_CAT.get(k) == "language") == (row == "programming"):
+                    chosen.append(({"display": disp(k), "status": "jd-added", "lex": k}, w, 500))
         chosen.sort(key=lambda x: (-x[1], x[2]))
         rows[row] = chosen
     return rows
@@ -298,6 +330,7 @@ def cmd_tailor(a):
             "jd_skills": {pretty(k): round(w, 2) for k, w in sorted(weights.items(), key=lambda x: -x[1])},
             "added_from_bank": [s["display"] for r in rows.values() for s, w, _ in r if s["status"] == "evidenced"],
             "dropped_for_space": dropped,
+            "study_list": [s["display"] for r in rows.values() for s, w, _ in r if s["status"] == "jd-added"],
             "missing_in_bank": [pretty(k) for k in missing if k in bank_all],
             "missing_not_in_bank": [pretty(k) for k in missing if k not in bank_all],
             "score_max_possible": round(100 * sum(w for k, w in weights.items() if k in present or k in bank_all) / (sum(weights.values()) or 1), 1),
