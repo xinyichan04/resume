@@ -18,14 +18,14 @@
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
 \renewcommand{\baselinestretch}{1.0}
-\AtBeginDocument{\fontsize{10pt}{12.9pt}\selectfont}
+\AtBeginDocument{\fontsize{10pt}{12.9pt}\selectfont\raggedright}
 
 % Section heading: bold caps with a full-width rule underneath
-\titleformat{\section}{\fontsize{10.5pt}{12pt}\selectfont\bfseries}{}{0pt}{}[\vspace{-7pt}\rule{\textwidth}{0.6pt}]
-\titlespacing*{\section}{0pt}{4pt}{1pt}
+\titleformat{\section}{\fontsize{10.5pt}{11pt}\selectfont\bfseries}{}{0pt}{}[\vspace{-8.5pt}\rule{\textwidth}{0.6pt}]
+\titlespacing*{\section}{0pt}{5pt}{0.5pt}
 
 % Bullets: 0.25in hanging indent like the Word list
-\setlist[itemize]{label=\textbullet, leftmargin=0.25in, labelsep=0.12in, itemsep=0pt, topsep=0pt, parsep=0pt, partopsep=0pt}
+\setlist[itemize]{label={\raisebox{0.1ex}{\small$\bullet$}}, leftmargin=0.25in, labelwidth=0.25in, labelsep=0pt, labelindent=0pt, align=left, itemsep=1.6pt, topsep=1.6pt, parsep=0pt, partopsep=0pt}
 
 % \entry{Org}{Location}{Title}{Dates}
 \newcommand{\entry}[4]{%
