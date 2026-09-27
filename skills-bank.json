@@ -1,5 +1,5 @@
 {
- "_rule": "Skills she has. status 'resume' = on the original Skills section; 'evidenced' = named in her own bullets. Per Cindy (2026-09-26 late: 'for skills im missing just add it into my skillset'), tailor.py ALSO adds JD skills that are not in this bank when the JD weights them >= 1 (not 'what you'll learn' extras); those are reported as study_list.",
+ "_rule": "Skills already on her résumé ('resume') or named in her bullets ('evidenced'). Per Cindy (2026-09-26 late: 'assume i know all the skills but i just didnt list'), tailor.py ALSO adds every other skill the JD names; the report lists those under study_list.",
  "rows": {
   "programming": [
    {
