@@ -1,0 +1,12 @@
+{
+  "_rule": "Tailoring may ONLY pick from this bank. 'resume' = listed in the original Skills section; 'evidenced' = named in her own experience/project bullets (defensible in an interview). Anything new must be confirmed by Cindy before it is added here.",
+  "programming": {
+    "resume": ["C", "Java", "Python", "C#", "C++", "JavaScript/TypeScript", "Standard ML", "Julia", "HTML", "CSS"],
+    "evidenced": ["SQL", "KDB+/q"]
+  },
+  "technologies": {
+    "resume": ["React", "Next.js", "Angular", "PostgreSQL", "MongoDB", "KDB+", "NumPy", "OpenCV", "PyTorch", "TensorFlow", "Docker", "Tailwind", "CI/CD", "Unity", "DPDK", "XDP", "AF_XDP", "TCP/IP Networking", "REST APIs"],
+    "evidenced": ["Django", "Spring Boot", "Redis", "WebSocket", "GitHub Actions", "Git", "Linux", "eBPF", "OpenOnload", "FIX Protocol", "UDP", "Jira", "Anthropic API", "LLM Agents", "Claude Code", "clang/libbpf"]
+  },
+  "languages_spoken": "English (fluent), Japanese (fluent), Chinese (native)"
+}

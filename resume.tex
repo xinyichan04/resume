@@ -1,0 +1,94 @@
+% Xinyi (Cindy) Bin -- Resume (LaTeX port of F26_Xinyi_Cindy_Bin_Resume_SWE.docx)
+% Compiles with pdfLaTeX (e.g. Overleaf default). Layout mirrors the Word file:
+% US Letter, 0.3in top/bottom and 0.5in side margins, Times 10pt, 1.15 line spacing.
+\documentclass[10pt,letterpaper]{article}
+
+\usepackage[letterpaper,top=0.3in,bottom=0.3in,left=0.5in,right=0.5in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext}            % Times New Roman look-alike
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+
+\definecolor{linkblue}{HTML}{4A7A96}
+\newcommand{\ulink}[2]{\href{#1}{\color{linkblue}\underline{#2}}}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\baselinestretch}{1.0}
+\AtBeginDocument{\fontsize{10pt}{12.9pt}\selectfont}
+
+% Section heading: bold caps with a full-width rule underneath
+\titleformat{\section}{\fontsize{10.5pt}{12pt}\selectfont\bfseries}{}{0pt}{}[\vspace{-7pt}\rule{\textwidth}{0.6pt}]
+\titlespacing*{\section}{0pt}{4pt}{1pt}
+
+% Bullets: 0.25in hanging indent like the Word list
+\setlist[itemize]{label=\textbullet, leftmargin=0.25in, labelsep=0.12in, itemsep=0pt, topsep=0pt, parsep=0pt, partopsep=0pt}
+
+% \entry{Org}{Location}{Title}{Dates}
+\newcommand{\entry}[4]{%
+  \textbf{#1}\hfill\textbf{#2}\\
+  \textit{#3}\hfill\textit{#4}\par}
+
+\begin{document}
+
+\begin{center}
+  {\fontsize{16pt}{18pt}\selectfont\bfseries Xinyi (Cindy) Bin}\\[1pt]
+  \ulink{mailto:xbin@andrew.cmu.edu}{xbin@andrew.cmu.edu} $|$ (412)-579-1910 $|$
+  Github: \ulink{https://github.com/xinyichan04}{xinyichan04} $|$
+  LinkedIn: \ulink{https://www.linkedin.com/in/xinyi-bin-cmucs/}{Cindy Bin}
+\end{center}
+\vspace{-12pt}
+
+\section*{EDUCATION}
+\entry{Carnegie Mellon University}{Pittsburgh, PA}{Bachelor of Science in Computer Science}{May 2028}
+\vspace{2pt}
+\textbf{Relevant Coursework:} Distributed System, Intro to Machine Learning, Database, Computer Systems, Computer Vision, DevOps\\
+\textbf{Research Assistant:} Built kernel-bypass (XDP/eBPF) layer with PhD researcher Yiran Lei to detect GPU requests early, reducing wake-up latency in agentic workflows.\\
+\textbf{Teaching Assistant:} 16-385 Computer Vision
+
+\section*{WORK EXPERIENCE}
+\entry{CS Academy}{Pittsburgh, PA}{Software Engineer Intern}{July 2026 - August 2026}
+\begin{itemize}
+  \item Boosted development velocity by 3x and minimized token usage by designing a parallel multi-agent workflow using Conductor and Claude Code across isolated Git worktrees, utilizing custom skills and claude.md files to maintain strict contextual accuracy.
+  \item Optimized backend data-layer efficiency by leveraging Django Query APIs to map complex frontend interactions to highly performant database operations, ensuring seamless, low-latency state transitions for localized multimedia configurations.
+\end{itemize}
+
+\entry{SMBC Nikko Securities}{Tokyo, Japan}{Equity System Development Intern}{May 2026 - June 2026}
+\begin{itemize}
+  \item Shipped a market data platform into production that aggregated real-time market depth from five stock exchanges, enabled direct order entry from the live depth display, and integrated Algo's child orders with their respective TCA markers.
+  \item Reduced market data latency by 60\% by optimizing server-to-server payload sizes. Analyzed system performance bottlenecks using KDB+/q queries and validated the latency reductions within a FIX-protocol trading simulator.
+  \item Shorten OpenOnload and AF\_XDP environment setup time by 70\% by developing a CLI that automated driver installation, kernel tuning, XDP configuration, and dependency management across many enterprise Linux environments.
+\end{itemize}
+
+\entry{teamLab}{Tokyo, Japan}{Software Engineer Intern}{December 2025 - January 2026}
+\begin{itemize}
+  \item Improved manual project management overhead by delivering GitHub Actions workflows that automatically updated Jira ticket statuses and sent Slack notifications based on codebase changes, which were adopted across the engineering department.
+  \item Delivered frontend features for a banking platform serving 15M+ annual users, optimized search functionality and infinite scrolling experiences with Next.js, Tailwind CSS, and REST APIs.
+\end{itemize}
+
+\entry{Sony PlayStation}{Tokyo, Japan}{Software Engineer Intern}{May 2025 - August 2025}
+\begin{itemize}
+  \item Shipped a full-stack social media platform for PlayStation 5 by leading frontend architecture, integrating 30+ backend APIs, and building scalable React interfaces with Spring Boot services as part of a 6-engineer Agile team.
+  \item Achieved content delivery latency to sub-200ms by implementing a WebSocket and Redis Pub/Sub infrastructure that dynamically adapted to traffic spikes and data arrival rate, utilizing data prefetching fallbacks to maintain high throughput.
+\end{itemize}
+\textbf{Other Experiences: Morgan Stanley Early Insight Program}
+
+\section*{PROJECTS}
+\textbf{Bloomberg Terminal lite}\par\vspace{2pt}
+\begin{itemize}
+  \item Built a real-time financial dashboard integrating live market data, price analytics, news feeds, and market-depth visualization
+  \item Developed AI-powered analysis tools that automatically collected peer companies, benchmarked performance against competitors, and generated trend insights and summary reports using the Anthropic API
+\end{itemize}
+\vspace{2pt}
+\textbf{Kernel Bypassing}\par\vspace{2pt}
+\begin{itemize}
+  \item Built the network transport layer of a market data pipeline, sending UDP tick packets to userspace while bypassing the Linux kernel socket stack.
+  \item Validated the XDP program against the kernel verifier by building a Dockerized clang/libbpf/bpftool toolchain, enabling eBPF development on macOS where it isn't natively supported.
+\end{itemize}
+
+\input{skills.tex}
+
+\end{document}
