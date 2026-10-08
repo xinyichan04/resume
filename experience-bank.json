@@ -1,0 +1,13 @@
+{
+ "_comment": "Extra work Cindy did that doesn't fit on the base résumé. Each entry CONFIRMED by Cindy (Discord). tailor.py may add these as bullets under the matching heading when they fit the JD. Never add an entry Cindy hasn't confirmed.",
+ "entries": [
+  {"id": "smbc-feed-metrics", "heading": "SMBC Nikko Securities", "confirmed": "2026-10-08",
+   "fact": "Built latency and health metrics for the exchange market-data feeds to detect and troubleshoot feed drops/data gaps in real time (monitoring, dashboards, alerts)."},
+  {"id": "smbc-cli-diagnostics", "heading": "SMBC Nikko Securities", "confirmed": "2026-10-08",
+   "fact": "Added diagnostics to the OpenOnload/AF_XDP setup CLI that detect and report misconfigured NIC/driver, network and kernel settings."},
+  {"id": "sony-ws-metrics", "heading": "Sony PlayStation", "confirmed": "2026-10-08",
+   "fact": "Load-tested and instrumented the WebSocket layer (logging, connection and throughput metrics, monitoring) to troubleshoot latency under traffic spikes."},
+  {"id": "kb-benchmark", "heading": "Kernel Bypassing", "confirmed": "2026-10-08",
+   "fact": "Benchmarked packet throughput and latency of the AF_XDP path against the standard Linux kernel socket stack."}
+ ]
+}
