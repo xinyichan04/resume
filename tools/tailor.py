@@ -314,12 +314,15 @@ def suggest_pending(facts, company, role):
 
 
 def rewrite_bullets(base_tex, jd, weights, company, role):
-    """Rewrites Experience/Projects bullets for the JD. Returns (new_tex, changes, error); on any failure the
-    original text comes back unchanged.
-    Per heading the model returns a list of bullets, each sourced from one original bullet ("o<id>") or one
-    Cindy-confirmed experience-bank entry ("b:<id>") under the SAME heading. It may drop the least relevant
-    bullets so the total never exceeds the original count (one page). Code checks: sources exist and belong to
-    that heading, no number that its source doesn't contain, bounded length."""
+    """Rewrites Experience/Projects bullets for the JD (Cindy 10-08 v3 spec).
+    Returns (render, changes, error): render(k) -> tex with the k least-relevant bullets dropped (for page fit).
+    - every original bullet is kept, same order; the first bullet of each heading is her summary bullet and is
+      never dropped or moved;
+    - wording stays close to the original (JD vocabulary woven in, the core of the work preserved);
+    - Cindy-confirmed experience-bank facts are appended as a short trailing clause to the most related bullet
+      of the same heading -- they never replace the main point;
+    - code checks: every number must appear in that bullet's sources; bounded length.
+    On any failure render(0) returns the original text."""
     lines, blocks = bullet_blocks(base_tex)
     bank = [e for e in json.load(open(EXP_BANK))["entries"]] if os.path.exists(EXP_BANK) else []
     keywords = [pretty(k) for k, _ in sorted(weights.items(), key=lambda x: -x[1])][:40]
@@ -333,84 +336,69 @@ def rewrite_bullets(base_tex, jd, weights, company, role):
         extra = [{"id": "b:" + e["id"], "fact": e["fact"]} for e in bank
                  if e["heading"].lower() in blk["heading"].lower()]
         payload.append({"heading": blk["heading"], "bullets": items, "confirmed_extra_facts": extra})
-    total = len(orig)
+    unchanged = lambda k=0: base_tex  # noqa: E731
     prompt = (
-        "You tailor résumé bullets so they pass an ATS / recruiter screen for one specific job.\n"
+        "You tailor résumé bullets for one specific job so they pass an ATS / recruiter screen.\n"
         f"Job: {role} at {company}.\n\nJOB DESCRIPTION:\n{jd[:12000]}\n\n"
         f"JD keywords by weight (highest first): {', '.join(keywords)}\n\n"
-        "RÉSUMÉ SECTIONS (each heading's current bullets, plus extra facts the candidate has CONFIRMED are true "
-        "for that heading but that didn't fit on the page):\n" + json.dumps(payload, ensure_ascii=False, indent=1) +
-        "\n\nFor each heading, output the bullets to print, best match first:\n"
-        "- Each bullet comes from exactly one source: an original bullet id (\"o3\") or a confirmed extra fact "
-        "id (\"b:...\") from the SAME heading. Add a confirmed extra fact whenever it matches this JD better than "
-        "an existing bullet; drop the least JD-relevant bullets to make room.\n"
-        f"- Total bullets across all headings must be <= {total}; keep at least 1 bullet per heading.\n"
-        "- FORMAT every bullet as: '<Achievement/result> by <what was built/done>, validated by <evidence>' "
-        "(e.g. 'Reduced X by 60% by ..., validated by ...'). Start with a strong past-tense achievement verb. "
-        "The 'validated by' clause must come from the source (a test, simulator, verifier, benchmark, metrics, "
-        "production adoption, user scale, team adoption); if the source has no evidence, end with the concrete "
-        "outcome instead of inventing validation.\n"
-        "- Rewrite AGGRESSIVELY in the JD's own vocabulary and framing: recast each piece of work as the JD "
-        "responsibility it is closest to, lead with what the JD cares about, pack in its key phrases wherever "
-        "they describe the work.\n"
-        "- Hard rules: no number/percentage/metric that isn't in that bullet's source; name a technology only if "
-        "the source or heading involves it (or a direct synonym/category); each bullet <= ~260 characters; plain "
-        "text, no markdown/LaTeX.\n"
-        "- Separately, list up to 3 'suggested_facts': work the candidate very plausibly also did under a heading "
-        "that would match this JD strongly but is NOT in her bullets or confirmed facts. These are NOT printed; "
-        "she will be asked to confirm them for future use.\n"
-        'Output ONLY JSON: {"sections": [{"heading": "...", "bullets": [{"source": "o3", "text": "..."}]}], '
-        '"suggested_facts": [{"heading": "...", "fact": "..."}]} with sections in the same order as given.'
-
+        "RÉSUMÉ SECTIONS (each heading's bullets in order, plus extra facts the candidate CONFIRMED are true for "
+        "that heading):\n" + json.dumps(payload, ensure_ascii=False, indent=1) +
+        "\n\nRules:\n"
+        "1. Keep EVERY bullet, in the SAME order and with the same id. The first bullet under each heading is the "
+        "summary of the role (what she mainly did) and must stay first and stay a summary.\n"
+        "2. Rewrite each bullet in the JD's vocabulary, but stay CLOSE to the original: keep its core subject, "
+        "main system and main result recognisable; weave in the JD's key phrases where they truthfully describe "
+        "the work; don't recast it as a different kind of work.\n"
+        "3. Format: start with a strong past-tense achievement verb, 'achieved X by doing Y'; add 'validated by Z' "
+        "only when the bullet or a fact gives real evidence (simulator, verifier, benchmark, load test, adoption, "
+        "user scale). Never invent validation.\n"
+        "4. Confirmed extra facts: if one matches the JD, APPEND it as a short trailing clause to the most related "
+        "bullet under the same heading (e.g. '..., and added latency/health alerts for feed drops'); the bullet's "
+        "main point must still lead. List the fact ids you used in that bullet's 'extras'. Don't create new bullets.\n"
+        "5. No number/percentage/metric that isn't in that bullet or its extras; name a technology only if the "
+        "bullet, its heading or its extras involve it; each bullet <= ~270 characters; plain text.\n"
+        "6. drop_priority: ALL non-first bullet ids, least JD-relevant first (used only if the page overflows).\n"
+        'Output ONLY JSON: {"bullets": {"o0": {"text": "...", "extras": []}, ...}, "drop_priority": ["o7", ...]}'
     )
     try:
         r = subprocess.run(["claude", "-p", "--model", "opus", "--output-format", "json"], input=prompt,
                            capture_output=True, text=True, timeout=300)
         res = json.loads(r.stdout)["result"]
         full = json.loads(res[res.index("{"):res.rindex("}") + 1])
-        out = full["sections"]
-        suggest_pending(full.get("suggested_facts") or [], company, role)
-        if len(out) != len(blocks):
-            raise ValueError(f"{len(out)} sections for {len(blocks)} headings")
+        new, drop_prio = full["bullets"], full.get("drop_priority") or []
     except Exception as e:  # noqa: BLE001 -- any failure keeps the original bullets
-        return base_tex, [], f"bullet rewrite failed: {type(e).__name__}: {str(e)[:200]}"
+        return unchanged, [], f"bullet rewrite failed: {type(e).__name__}: {str(e)[:200]}"
     bank_by_id = {"b:" + e["id"]: e for e in bank}
-    changes, new_blocks, count = [], [], 0
-    for bi, (blk, sec) in enumerate(zip(blocks, out)):
-        kept = []
-        for bl in sec.get("bullets", []):
-            src, txt = bl.get("source", ""), (bl.get("text") or "").strip()
-            if src in orig and orig[src][0] == bi:
-                src_text = orig[src][1]
-            elif src in bank_by_id and bank_by_id[src]["heading"].lower() in blk["heading"].lower():
-                src_text = bank_by_id[src]["fact"]
-            else:
-                changes.append({"heading": blk["heading"], "rejected": f"bad source {src!r}"})
-                continue
-            bad = set(NUM_RE.findall(txt)) - set(NUM_RE.findall(src_text))
-            if not txt or bad or len(txt) > 300:
-                changes.append({"heading": blk["heading"], "source": src,
-                                "rejected": f"new numbers {sorted(bad)}" if bad else "empty/too long"})
-                if src in orig:     # fall back to the original wording for that slot
-                    kept.append((src, orig[src][1], None))
-                continue
-            kept.append((src, txt, src_text))
-        if not kept:            # never leave a heading empty
-            kept = [(f"o{k}", t, None) for k, (b2, t) in orig.items() if b2 == bi][:1]
-        new_blocks.append(kept)
-        count += len(kept)
-    if count > total:
-        return base_tex, changes, f"model returned {count} bullets > {total}; originals kept"
-    for bi in reversed(range(len(blocks))):
-        blk = blocks[bi]
-        body = [blk["prefix"] + tex_escape(t) for _, t, _ in new_blocks[bi]]
-        lines[blk["begin"] + 1:blk["end"]] = body
-        for src, t, s_txt in new_blocks[bi]:
-            changes.insert(0, {"heading": blk["heading"], "source": src,
-                               "before": s_txt if s_txt else "(original kept)", "after": t})
-    dropped = [oid for oid in orig if not any(src == oid for kb in new_blocks for src, _, _ in kb)]
-    changes.append({"dropped_original_bullets": [orig[o][1][:80] for o in dropped]})
-    return "\n".join(lines), changes, None
+    firsts = {f"o{sum(len(b['items']) for b in blocks[:bi])}" for bi in range(len(blocks))}
+    final, changes = {}, []
+    for oid, (bi, old) in orig.items():
+        nb = new.get(oid) or {}
+        txt = (nb.get("text") or "").strip()
+        ex = [x for x in nb.get("extras") or [] if x in bank_by_id
+              and bank_by_id[x]["heading"].lower() in blocks[bi]["heading"].lower()]
+        allowed = set(NUM_RE.findall(old)).union(*[set(NUM_RE.findall(bank_by_id[x]["fact"])) for x in ex])
+        bad = set(NUM_RE.findall(txt)) - allowed
+        if not txt or bad or len(txt) > 320:
+            final[oid] = old
+            changes.append({"heading": blocks[bi]["heading"], "source": oid,
+                            "rejected": f"new numbers {sorted(bad)}" if bad else "empty/too long"})
+            continue
+        final[oid] = txt
+        changes.append({"heading": blocks[bi]["heading"], "source": oid, "extras": ex, "before": old, "after": txt})
+    drop_prio = [d for d in drop_prio if d in orig and d not in firsts]
+    drop_prio += [o for o in orig if o not in firsts and o not in drop_prio]   # anything the model omitted
+
+    def render(k=0):
+        gone = set(drop_prio[:k])
+        out = list(lines)
+        for bi in reversed(range(len(blocks))):
+            blk = blocks[bi]
+            ids = [o for o, (b2, _) in orig.items() if b2 == bi and o not in gone]
+            out[blk["begin"] + 1:blk["end"]] = [blk["prefix"] + tex_escape(final[o]) for o in ids]
+        return "\n".join(out)
+    render.drop_prio = drop_prio
+    render.orig = orig
+    return render, changes, None
 
 # ------------------------------------------------------------------ build / pages
 
@@ -473,7 +461,7 @@ def cmd_tailor(a):
     base = "main" if track == "swe" and not git("branch", "--list", "swe") else track
     base_tex = show(base, "resume.tex")
     if a.no_rewrite:
-        new_tex, changes, rw_err = base_tex, [], "disabled (--no-rewrite)"
+        new_tex, changes, rw_err = (lambda k=0: base_tex), [], "disabled (--no-rewrite)"
     else:
         lock.close()                      # LLM call outside the lock
         new_tex, changes, rw_err = rewrite_bullets(base_tex, jd, weights, a.company, a.role)
@@ -492,10 +480,19 @@ def cmd_tailor(a):
         base_text = resume_text(tree)
         base_score, _ = score(base_text, weights)
         resume_path = os.path.join(tree, "resume.tex")
-        open(resume_path, "w").write(new_tex)
-        if changes and compile_pdf(tree)[1] != 1:     # rewritten bullets alone overflow: keep originals
-            open(resume_path, "w").write(base_tex)
-            changes, rw_err = [], "bullet rewrite overflowed one page; originals kept"
+        dropped_bullets = []
+        if changes:
+            # page fit: drop least JD-relevant non-summary bullets until the rewritten bullets fit on one page
+            for k in range(len(getattr(new_tex, "drop_prio", [])) + 1):
+                open(resume_path, "w").write(new_tex(k))
+                if compile_pdf(tree)[1] == 1:
+                    dropped_bullets = [new_tex.orig[o][1][:80] for o in new_tex.drop_prio[:k]]
+                    break
+            else:
+                open(resume_path, "w").write(base_tex)
+                changes, rw_err = [], "bullet rewrite could not fit one page; originals kept"
+        else:
+            open(resume_path, "w").write(new_tex(0))
 
         rows = plan_rows(open(os.path.join(tree, "skills.tex")).read(), weights)
         dropped = []
@@ -527,7 +524,8 @@ def cmd_tailor(a):
             "score_max_possible": round(100 * sum(w for k, w in weights.items() if k in present or k in bank_all) / (sum(weights.values()) or 1), 1),
             "pages": 1,
             "bullets_rewritten": sum(1 for c in changes if "after" in c),
-            "bank_bullets_added": [c["source"] for c in changes if c.get("source", "").startswith("b:") and "after" in c],
+            "bank_extras_used": sorted({x for c in changes for x in c.get("extras", [])}),
+            "dropped_bullets_for_space": dropped_bullets,
             "bullet_changes": changes,
             "bullet_rewrite_error": rw_err,
         }
