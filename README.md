@@ -19,6 +19,6 @@ LaTeX source of the résumé, with git as its version history.
 
 ## Rules
 - One page, same font sizes as the original. When space runs short, the least JD-relevant skills are dropped.
-- Experience, Education and Projects are never changed by tailoring.
+- Experience and Projects bullets are rewritten per JD in the JD's vocabulary by Claude Opus (Cindy 2026-10-08: the résumé screen is the bottleneck). Code-enforced guard rails: same work per bullet, no number that isn't already in that bullet, bounded length, one page; employer/title/dates/Education never change. `--no-rewrite` restores Skills-only tailoring.
 
 Compile: `tectonic resume.tex` (or upload to Overleaf; pdfLaTeX works).

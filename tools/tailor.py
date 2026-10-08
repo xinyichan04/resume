@@ -10,7 +10,9 @@ What it does (tailor):
   1. reads the JD and finds every skill it names (tools/lexicon.json + skills-bank.json aliases),
      weighted by where it appears: requirements x3, preferred x1.5, anywhere else x1, +0.25 per repeat.
   2. picks the closest track branch (infra / ai / finance / swe) unless --track is given.
-  3. rewrites ONLY skills.tex on a new branch tailored/<company>-<role>-<date> off that track:
+  2b. rewrites every Experience/Projects bullet in the JD's vocabulary via Claude Opus (Cindy 10-08;
+     no new numbers, same work, bounded length; --no-rewrite to skip).
+  3. rewrites skills.tex on a new branch tailored/<company>-<role>-<date> off that track:
      skills the JD asks for move to the front; 'evidenced' bank skills (from her own bullets) are
      added only if the JD asks for them; nothing outside skills-bank.json is ever added.
   4. compiles with tectonic; if it spills past one page, drops the least JD-relevant skills from the
@@ -247,6 +249,110 @@ def render(rows):
     return "\n".join(lines)
 
 
+# ------------------------------------------------------------------ bullets (Cindy 10-08)
+# Cindy 2026-10-08: "change the description of my experience and project too, so that it key words
+# match with the job description" -- the résumé screen is her bottleneck. Every Experience/Projects
+# bullet is rewritten per JD by Claude (Opus): JD vocabulary, reordered emphasis, freely reworded.
+# Guard rails enforced in code, not just the prompt: same bullet count, every number in a rewritten
+# bullet must already appear in that bullet's original (no invented metrics), bounded length so the
+# page still fits. Employer, title, dates and section headers are never touched (only \item text is).
+BULLET_RE = re.compile(r"^(\s*\\item\s+)(.*)$")
+SECTION_START, SECTION_END = r"\section*{WORK EXPERIENCE}", r"\input{skills.tex}"
+
+
+def bullet_lines(tex):
+    """[(line_index, header_context, text)] for every \\item between WORK EXPERIENCE and the skills input."""
+    lines = tex.split("\n")
+    a = next(i for i, l in enumerate(lines) if SECTION_START in l)
+    b = next(i for i, l in enumerate(lines) if SECTION_END in l)
+    out, header = [], ""
+    for i in range(a, b):
+        m = BULLET_RE.match(lines[i])
+        if m:
+            out.append((i, header, m.group(2)))
+        elif lines[i].strip() and not lines[i].strip().startswith(("\\begin{itemize}", "\\end{itemize}", "%")):
+            header = plain(lines[i]).strip()
+    return lines, out
+
+
+def tex_escape(s):
+    s = s.replace("\\", "")
+    for c in "%&#_$":
+        s = re.sub(r"(?<!\\)" + re.escape(c), "\\\\" + c, s)
+    return s
+
+
+NUM_RE = re.compile(r"\d+(?:\.\d+)?")
+
+
+def rewrite_bullets(base_tex, jd, weights, company, role):
+    """Returns (new_tex, changes, error). On any failure the original text is returned unchanged."""
+    lines, bullets = bullet_lines(base_tex)
+    keywords = [pretty(k) for k, _ in sorted(weights.items(), key=lambda x: -x[1])][:40]
+    items = [{"id": n, "section": h, "text": plain(t).strip()} for n, (_, h, t) in enumerate(bullets)]
+    prompt = (
+        "You rewrite résumé bullets so they pass an ATS / recruiter keyword screen for one specific job.\n"
+        f"Job: {role} at {company}.\n\nJOB DESCRIPTION:\n{jd[:12000]}\n\n"
+        f"JD keywords by weight (highest first): {', '.join(keywords)}\n\n"
+        "BULLETS (id, the role/project heading it sits under, current text):\n"
+        + json.dumps(items, ensure_ascii=False, indent=1) +
+        "\n\nRewrite EVERY bullet AGGRESSIVELY so a recruiter or ATS skimming for this job sees a direct match. "
+        "The candidate explicitly wants bullets that read very differently from the originals if that matches "
+        "the JD better. For each bullet: (a) find the JD responsibility/requirement it is closest to and recast "
+        "the work in that JD's own words and domain framing (e.g. for an ML job frame a data pipeline as feeding "
+        "models/evaluation; for an infra job frame the same work as reliability/scalability/observability); "
+        "(b) lead with the aspect most relevant to the JD and cut details the JD doesn't care about; (c) pack in "
+        "the JD's key phrases and concepts verbatim wherever they describe what was actually done "
+        "(e.g. 'distributed systems', 'scalable backend services', 'data pipelines', 'production ML', "
+        "'reliability', 'cross-functional collaboration'). Strong action verb first, outcome-oriented, "
+        "plain text (no markdown, no LaTeX). Also return, per heading, the bullet ids in best-match-first order.\n"
+        "Hard rules: (1) each bullet must still describe the same underlying work under its heading; "
+        "(2) do NOT introduce any number, percentage or metric that is not already in that same bullet, and keep "
+        "the ones that are; (3) name a specific technology only if the original bullet or its heading already "
+        "involves it (or it is a direct synonym/category of one that does); JD technologies she didn't use in that "
+        "role are handled by the Skills section, not here; (4) each rewritten bullet at most "
+        "the original's length + 10%; (5) keep every id.\n"
+        'Output ONLY a JSON object: {"bullets": {"0": "...", "1": "..."}, "order": [[ids of heading 1 in best-first order], ...]}.'
+    )
+    try:
+        r = subprocess.run(["claude", "-p", "--model", "opus", "--output-format", "json"], input=prompt,
+                           capture_output=True, text=True, timeout=300)
+        res = json.loads(r.stdout)["result"]
+        out = json.loads(res[res.index("{"):res.rindex("}") + 1])
+        new, order = out.get("bullets", out), out.get("order") or []
+    except Exception as e:  # noqa: BLE001 -- any failure keeps the original bullets
+        return base_tex, [], f"bullet rewrite failed: {type(e).__name__}: {str(e)[:200]}"
+    changes = []
+    for n, (li, h, old) in enumerate(bullets):
+        txt = (new.get(str(n)) or "").strip()
+        old_plain = plain(old).strip()
+        if not txt:
+            continue
+        bad_nums = set(NUM_RE.findall(txt)) - set(NUM_RE.findall(old_plain))
+        if bad_nums:
+            changes.append({"id": n, "kept_original": f"new numbers {sorted(bad_nums)}"})
+            continue
+        if len(txt) > len(old_plain) * 1.15 + 10:
+            changes.append({"id": n, "kept_original": "too long"})
+            continue
+        lines[li] = BULLET_RE.match(lines[li]).group(1) + tex_escape(txt)
+        changes.append({"id": n, "section": h, "before": old_plain, "after": txt})
+    # best-match-first within each heading: only a permutation of that heading's own bullet slots
+    for grp in order:
+        try:
+            ids = [int(i) for i in grp]
+        except (TypeError, ValueError):
+            continue
+        slots = sorted(bullets[i][0] for i in ids if 0 <= i < len(bullets))
+        same_heading = len({bullets[i][1] for i in ids if 0 <= i < len(bullets)}) == 1
+        if same_heading and len(slots) == len(set(ids)) == len(ids) and slots and \
+                slots == sorted(li for li, h, _ in bullets if h == bullets[ids[0]][1]):
+            texts = [lines[bullets[i][0]] for i in ids]
+            for li, t in zip(slots, texts):
+                lines[li] = t
+    return "\n".join(lines), changes, None
+
+
 # ------------------------------------------------------------------ build / pages
 
 def pdf_pages(path):
@@ -298,14 +404,22 @@ def read_jd(path):
 def cmd_tailor(a):
     import fcntl
     os.makedirs(os.path.dirname(LOCK), exist_ok=True)
+    jd = read_jd(a.jd)
     lock = open(LOCK, "w")
     fcntl.flock(lock, fcntl.LOCK_EX)        # parallel appliers: git worktrees/refs are shared state
-    jd = read_jd(a.jd)
     if len(jd.strip()) < 200:
         raise SystemExit("JD text too short (<200 chars): pass the full job description")
     weights = jd_weights(jd, a.company)
     track, track_scores = (a.track, None) if a.track != "auto" else pick_track(jd, weights)
     base = "main" if track == "swe" and not git("branch", "--list", "swe") else track
+    base_tex = show(base, "resume.tex")
+    if a.no_rewrite:
+        new_tex, changes, rw_err = base_tex, [], "disabled (--no-rewrite)"
+    else:
+        lock.close()                      # LLM call outside the lock
+        new_tex, changes, rw_err = rewrite_bullets(base_tex, jd, weights, a.company, a.role)
+        lock = open(LOCK, "w")
+        fcntl.flock(lock, fcntl.LOCK_EX)
 
     date = dt.date.today().strftime("%Y%m%d")
     branch = f"tailored/{slug(a.company, 20)}-{slug(a.role)}-{date}"
@@ -318,6 +432,11 @@ def cmd_tailor(a):
     try:
         base_text = resume_text(tree)
         base_score, _ = score(base_text, weights)
+        resume_path = os.path.join(tree, "resume.tex")
+        open(resume_path, "w").write(new_tex)
+        if changes and compile_pdf(tree)[1] != 1:     # rewritten bullets alone overflow: keep originals
+            open(resume_path, "w").write(base_tex)
+            changes, rw_err = [], "bullet rewrite overflowed one page; originals kept"
 
         rows = plan_rows(open(os.path.join(tree, "skills.tex")).read(), weights)
         dropped = []
@@ -348,6 +467,9 @@ def cmd_tailor(a):
             "missing_not_in_bank": [pretty(k) for k in missing if k not in bank_all],
             "score_max_possible": round(100 * sum(w for k, w in weights.items() if k in present or k in bank_all) / (sum(weights.values()) or 1), 1),
             "pages": 1,
+            "bullets_rewritten": sum(1 for c in changes if "after" in c),
+            "bullet_changes": changes,
+            "bullet_rewrite_error": rw_err,
         }
         if a.dry_run:
             report["pdf"] = pdf
@@ -357,8 +479,9 @@ def cmd_tailor(a):
             print(json.dumps(report, indent=1))
             return
 
-        git("add", "skills.tex", cwd=tree)
-        git("commit", "-q", "-m", f"Tailor for {a.company}: {a.role} (ATS score {base_score} -> {new_score})", cwd=tree)
+        git("add", "skills.tex", "resume.tex", cwd=tree)
+        # --allow-empty: skills already a full match for the JD leaves nothing to commit, which is still a valid tailoring
+        git("commit", "-q", "--allow-empty", "-m", f"Tailor for {a.company}: {a.role} (ATS score {base_score} -> {new_score})", cwd=tree)
         dest = os.path.join(OUT, slug(branch, 80))
         os.makedirs(dest, exist_ok=True)
         shutil.copy(pdf, os.path.join(dest, PDF_NAME))
@@ -395,6 +518,7 @@ if __name__ == "__main__":
     t = sub.add_parser("tailor"); t.add_argument("--jd", required=True); t.add_argument("--company", required=True)
     t.add_argument("--role", required=True); t.add_argument("--track", default="auto", choices=("auto",) + TRACKS)
     t.add_argument("--no-push", action="store_true"); t.add_argument("--dry-run", action="store_true")
+    t.add_argument("--no-rewrite", action="store_true", help="keep Experience/Projects bullets as-is (Skills-only tailoring)")
     s = sub.add_parser("score"); s.add_argument("--jd", required=True); s.add_argument("--branch", default="main")
     k = sub.add_parser("track"); k.add_argument("--jd", required=True)
     a = p.parse_args()
