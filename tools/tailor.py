@@ -346,7 +346,16 @@ def swap_experiences(tex, weights):
         while ls and not ls[-1].strip():
             ls.pop()
         body += ls + [""]
-    out = lines[:a + 1] + body[:-1] + lines[b:]
+    rest = lines[b:]
+    removed = [u for u in units if u not in keep]
+    # Cindy 10-09: an experience left out is still named on the "Other Experiences" line, newest first
+    for i, l in enumerate(rest):
+        m = re.match(r"\\textbf\{Other Experiences:\s*(.*)\}\s*$", l)
+        if m and removed:
+            names = [u["name"] for u in sorted(removed, key=lambda u: u["end"], reverse=True)]
+            rest[i] = r"\textbf{Other Experiences: " + ", ".join(names + [m.group(1).strip()]) + "}"
+            break
+    out = lines[:a + 1] + body[:-1] + rest
     info = {"added": [u["name"] for u in keep if u.get("optional")],
             "removed": [u["name"] for u in units if u not in keep],
             "relevance": {u["name"]: u["score"] for u in units}}
