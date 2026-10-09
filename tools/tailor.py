@@ -372,7 +372,7 @@ def rewrite_bullets(base_tex, jd, weights, company, role):
         "main point must still lead. List the fact ids you used in that bullet's 'extras'. Don't create new bullets.\n"
         "4b. If no confirmed fact fits a heading but the JD stresses something that is a NATURAL, INHERENT part of "
         "doing that bullet's own work (e.g. testing, debugging, monitoring, profiling, documenting or code-reviewing "
-        "the SAME system), you may append ONE such short clause per heading. It must not add a new system, tool, "
+        "the SAME system), you may append such short clauses wherever they help -- no fixed limit (Cindy 10-08), but at most one per bullet and only when genuinely natural for that work. It must not add a new system, tool, "
         "metric, team or responsibility, and never anything in that heading's never_claim list. Put "
         "'inferred:<the clause>' in that bullet's 'extras'.\n"
         "5. No number/percentage/metric that isn't in that bullet or its extras; name a technology only if the "
@@ -396,7 +396,7 @@ def rewrite_bullets(base_tex, jd, weights, company, role):
         txt = (nb.get("text") or "").strip()
         ex = [x for x in nb.get("extras") or [] if x in bank_by_id
               and bank_by_id[x]["heading"].lower() in blocks[bi]["heading"].lower()]
-        inferred = [x for x in nb.get("extras") or [] if isinstance(x, str) and x.startswith("inferred:")][:1]
+        inferred = [x for x in nb.get("extras") or [] if isinstance(x, str) and x.startswith("inferred:")]
         ex += inferred
         allowed = set(NUM_RE.findall(old)).union(*[set(NUM_RE.findall(bank_by_id[x]["fact"])) for x in ex if x in bank_by_id])
         bad = set(NUM_RE.findall(txt)) - allowed
