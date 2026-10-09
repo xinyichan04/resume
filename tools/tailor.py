@@ -288,6 +288,71 @@ def bullet_blocks(tex):
     return lines, blocks
 
 
+OPT_EXP = os.path.join(REPO, "optional-experiences.json")
+MONTHS = {m: i for i, m in enumerate(("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"), 1)}
+
+
+def _end_key(dates):
+    """'May 2026 - June 2026' -> (2026, 6); 'Present' sorts last-first."""
+    last = re.split(r"\s+[-–]\s+", dates)[-1].strip().lower()
+    if last.startswith("present"):
+        return (9999, 12)
+    m = re.match(r"([a-z]{3})[a-z]*\.?\s+(\d{4})", last)
+    return (int(m.group(2)), MONTHS.get(m.group(1), 1)) if m else (0, 0)
+
+
+def swap_experiences(tex, weights):
+    """Cindy 10-09: keep WORK EXPERIENCE at max_experiences entries; an optional experience
+    (optional-experiences.json) replaces the least JD-relevant entry only when it scores strictly higher.
+    Relevance = sum of JD weights of skills found in the entry's text. Order stays reverse-chronological.
+    Returns (tex, info) where info is None when nothing changed."""
+    if not os.path.exists(OPT_EXP):
+        return tex, None
+    cfg = json.load(open(OPT_EXP))
+    opts = [e for e in cfg.get("entries", []) if e.get("dates") and e.get("title") and e.get("location")]
+    if not opts:
+        return tex, None
+    lines = tex.split("\n")
+    a = next(i for i, l in enumerate(lines) if SECTION_START in l)
+    b = next(i for i, l in enumerate(lines) if l.startswith(r"\textbf{Other Experiences") or l.startswith(r"\section*{PROJECTS}"))
+    starts = [i for i in range(a + 1, b) if lines[i].startswith(r"\entry{")]
+    units = []                                   # each: entry line .. blank lines before the next entry
+    for j, s in enumerate(starts):
+        e = starts[j + 1] if j + 1 < len(starts) else b
+        chunk = lines[s:e]
+        dates = re.findall(r"\{([^{}]*)\}", chunk[0])[3]
+        units.append({"name": re.match(r"\\entry\{([^}]*)\}", chunk[0]).group(1), "lines": chunk, "end": _end_key(dates)})
+    for o in opts:
+        body = [rf"\entry{{{o['org']}}}{{{o['location']}}}{{{o['title']}}}{{{o['dates']}}}", r"\begin{itemize}"]
+        body += ["  \\item " + x for x in o["bullets"]] + [r"\end{itemize}", ""]
+        units.append({"name": o["org"], "lines": body, "end": _end_key(o["dates"]), "optional": True})
+
+    def rel(u):
+        txt = plain("\n".join(u["lines"]))
+        return round(sum(w for k, w in weights.items() if TERMS[k].search(txt)), 2)
+    for u in units:
+        u["score"] = rel(u)
+    cap = cfg.get("max_experiences", 4)
+    keep = list(units)
+    while len(keep) > cap:
+        # drop the lowest-scoring entry; on a tie drop an optional one first, then the oldest
+        keep.remove(min(keep, key=lambda u: (u["score"], not u.get("optional"), u["end"])))
+    if not any(u.get("optional") for u in keep):
+        return tex, None
+    keep.sort(key=lambda u: u["end"], reverse=True)
+    body = []
+    for u in keep:                               # one blank line between entries, none after the last
+        ls = list(u["lines"])
+        while ls and not ls[-1].strip():
+            ls.pop()
+        body += ls + [""]
+    out = lines[:a + 1] + body[:-1] + lines[b:]
+    info = {"added": [u["name"] for u in keep if u.get("optional")],
+            "removed": [u["name"] for u in units if u not in keep],
+            "relevance": {u["name"]: u["score"] for u in units}}
+    return "\n".join(out), info
+
+
 def tex_escape(s):
     s = s.replace("\\", "")
     for c in "%&#_$":
@@ -484,6 +549,7 @@ def cmd_tailor(a):
     track, track_scores = (a.track, None) if a.track != "auto" else pick_track(jd, weights)
     base = "main" if track == "swe" and not git("branch", "--list", "swe") else track
     base_tex = show(base, "resume.tex")
+    base_tex, exp_swap = swap_experiences(base_tex, weights)
     if a.no_rewrite:
         new_tex, changes, rw_err = (lambda k=0: base_tex), [], "disabled (--no-rewrite)"
     else:
@@ -551,6 +617,7 @@ def cmd_tailor(a):
             "bank_extras_used": sorted({x for c in changes for x in c.get("extras", []) if x.startswith("b:")}),
             "inferred_extras_used": [x[9:] for c in changes for x in c.get("extras", []) if x.startswith("inferred:")],
             "dropped_bullets_for_space": dropped_bullets,
+            "experience_swap": exp_swap,
             "bullet_changes": changes,
             "bullet_rewrite_error": rw_err,
         }

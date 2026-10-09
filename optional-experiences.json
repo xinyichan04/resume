@@ -1,0 +1,18 @@
+{
+  "_comment": "Experiences the tailor may swap in for the least JD-relevant one so WORK EXPERIENCE stays at 4 entries (Cindy 2026-10-09: 'u can choose this experience when appropriate, maybe keep it to 4 experiences'). Bullets are LaTeX, verbatim from Cindy. 'end' (YYYY-MM) places the entry in reverse-chronological order. An entry with dates null is skipped until Cindy supplies them.",
+  "max_experiences": 4,
+  "entries": [
+    {
+      "id": "softbank",
+      "org": "SoftBank",
+      "location": null,
+      "title": null,
+      "dates": null,
+      "end": null,
+      "bullets": [
+        "Improved production efficiency by 30\\% for SoftBank's internal account system by building a CI/CD pipeline, where a Jenkinsfile automates compile, Docker image build, instance launch, and a deploy-or-abort gate.",
+        "Established the system's first automated test coverage, which had no unit tests or automation before, by building an LLM-based workflow that converts natural-language requirements into Playwright tests."
+      ]
+    }
+  ]
+}
