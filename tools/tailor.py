@@ -321,11 +321,12 @@ def swap_experiences(tex, weights):
         e = starts[j + 1] if j + 1 < len(starts) else b
         chunk = lines[s:e]
         dates = re.findall(r"\{([^{}]*)\}", chunk[0])[3]
-        units.append({"name": re.match(r"\\entry\{([^}]*)\}", chunk[0]).group(1), "lines": chunk, "end": _end_key(dates)})
+        org, _, title = re.findall(r"\{([^{}]*)\}", chunk[0])[:3]
+        units.append({"name": org, "title": title, "lines": chunk, "end": _end_key(dates)})
     for o in opts:
         body = [rf"\entry{{{o['org']}}}{{{o['location']}}}{{{o['title']}}}{{{o['dates']}}}", r"\begin{itemize}"]
         body += ["  \\item " + x for x in o["bullets"]] + [r"\end{itemize}", ""]
-        units.append({"name": o["org"], "lines": body, "end": _end_key(o["dates"]), "optional": True})
+        units.append({"name": o["org"], "title": o["title"], "lines": body, "end": _end_key(o["dates"]), "optional": True})
 
     def rel(u):
         txt = plain("\n".join(u["lines"]))
@@ -352,7 +353,7 @@ def swap_experiences(tex, weights):
     for i, l in enumerate(rest):
         m = re.match(r"\\textbf\{Other Experiences:\s*(.*)\}\s*$", l)
         if m and removed:
-            names = [u["name"] for u in sorted(removed, key=lambda u: u["end"], reverse=True)]
+            names = [f'{u["name"]} {u["title"]}' for u in sorted(removed, key=lambda u: u["end"], reverse=True)]
             rest[i] = r"\textbf{Other Experiences: " + ", ".join(names + [m.group(1).strip()]) + "}"
             break
     out = lines[:a + 1] + body[:-1] + rest
