@@ -313,6 +313,19 @@ def suggest_pending(facts, company, role):
         pass
 
 
+def log_inferred(heading, clause, company, role):
+    """Inferred (unconfirmed, inherent-to-the-work) clauses that went onto a résumé: logged for Cindy's weekly
+    veto review (Cindy 10-08: automate, don't ask per tailoring). A vetoed clause moves to "vetoed" and the
+    prompt is told never to claim it again."""
+    try:
+        bank = json.load(open(EXP_BANK))
+        bank.setdefault("inferred_used", []).append({"heading": heading, "fact": clause, "for": f"{company}: {role}",
+                                                     "date": dt.date.today().isoformat()})
+        json.dump(bank, open(EXP_BANK, "w"), indent=1, ensure_ascii=False)
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def rewrite_bullets(base_tex, jd, weights, company, role):
     """Rewrites Experience/Projects bullets for the JD (Cindy 10-08 v3 spec).
     Returns (render, changes, error): render(k) -> tex with the k least-relevant bullets dropped (for page fit).
@@ -324,7 +337,8 @@ def rewrite_bullets(base_tex, jd, weights, company, role):
     - code checks: every number must appear in that bullet's sources; bounded length.
     On any failure render(0) returns the original text."""
     lines, blocks = bullet_blocks(base_tex)
-    bank = [e for e in json.load(open(EXP_BANK))["entries"]] if os.path.exists(EXP_BANK) else []
+    bank_all = json.load(open(EXP_BANK)) if os.path.exists(EXP_BANK) else {}
+    bank, vetoed = bank_all.get("entries", []), bank_all.get("vetoed", [])
     keywords = [pretty(k) for k, _ in sorted(weights.items(), key=lambda x: -x[1])][:40]
     orig, payload = {}, []
     for bi, blk in enumerate(blocks):
@@ -335,7 +349,8 @@ def rewrite_bullets(base_tex, jd, weights, company, role):
             items.append({"id": oid, "text": orig[oid][1]})
         extra = [{"id": "b:" + e["id"], "fact": e["fact"]} for e in bank
                  if e["heading"].lower() in blk["heading"].lower()]
-        payload.append({"heading": blk["heading"], "bullets": items, "confirmed_extra_facts": extra})
+        payload.append({"heading": blk["heading"], "bullets": items, "confirmed_extra_facts": extra,
+                        "never_claim": [v["fact"] for v in vetoed if v["heading"].lower() in blk["heading"].lower()]})
     unchanged = lambda k=0: base_tex  # noqa: E731
     prompt = (
         "You tailor résumé bullets for one specific job so they pass an ATS / recruiter screen.\n"
@@ -355,6 +370,11 @@ def rewrite_bullets(base_tex, jd, weights, company, role):
         "4. Confirmed extra facts: if one matches the JD, APPEND it as a short trailing clause to the most related "
         "bullet under the same heading (e.g. '..., and added latency/health alerts for feed drops'); the bullet's "
         "main point must still lead. List the fact ids you used in that bullet's 'extras'. Don't create new bullets.\n"
+        "4b. If no confirmed fact fits a heading but the JD stresses something that is a NATURAL, INHERENT part of "
+        "doing that bullet's own work (e.g. testing, debugging, monitoring, profiling, documenting or code-reviewing "
+        "the SAME system), you may append ONE such short clause per heading. It must not add a new system, tool, "
+        "metric, team or responsibility, and never anything in that heading's never_claim list. Put "
+        "'inferred:<the clause>' in that bullet's 'extras'.\n"
         "5. No number/percentage/metric that isn't in that bullet or its extras; name a technology only if the "
         "bullet, its heading or its extras involve it; each bullet <= ~270 characters; plain text.\n"
         "6. drop_priority: ALL non-first bullet ids, least JD-relevant first (used only if the page overflows).\n"
@@ -376,7 +396,9 @@ def rewrite_bullets(base_tex, jd, weights, company, role):
         txt = (nb.get("text") or "").strip()
         ex = [x for x in nb.get("extras") or [] if x in bank_by_id
               and bank_by_id[x]["heading"].lower() in blocks[bi]["heading"].lower()]
-        allowed = set(NUM_RE.findall(old)).union(*[set(NUM_RE.findall(bank_by_id[x]["fact"])) for x in ex])
+        inferred = [x for x in nb.get("extras") or [] if isinstance(x, str) and x.startswith("inferred:")][:1]
+        ex += inferred
+        allowed = set(NUM_RE.findall(old)).union(*[set(NUM_RE.findall(bank_by_id[x]["fact"])) for x in ex if x in bank_by_id])
         bad = set(NUM_RE.findall(txt)) - allowed
         if not txt or bad or len(txt) > 320:
             final[oid] = old
@@ -384,6 +406,8 @@ def rewrite_bullets(base_tex, jd, weights, company, role):
                             "rejected": f"new numbers {sorted(bad)}" if bad else "empty/too long"})
             continue
         final[oid] = txt
+        for x in inferred:
+            log_inferred(blocks[bi]["heading"], x[9:].strip(), company, role)
         changes.append({"heading": blocks[bi]["heading"], "source": oid, "extras": ex, "before": old, "after": txt})
     drop_prio = [d for d in drop_prio if d in orig and d not in firsts]
     drop_prio += [o for o in orig if o not in firsts and o not in drop_prio]   # anything the model omitted
@@ -524,7 +548,8 @@ def cmd_tailor(a):
             "score_max_possible": round(100 * sum(w for k, w in weights.items() if k in present or k in bank_all) / (sum(weights.values()) or 1), 1),
             "pages": 1,
             "bullets_rewritten": sum(1 for c in changes if "after" in c),
-            "bank_extras_used": sorted({x for c in changes for x in c.get("extras", [])}),
+            "bank_extras_used": sorted({x for c in changes for x in c.get("extras", []) if x.startswith("b:")}),
+            "inferred_extras_used": [x[9:] for c in changes for x in c.get("extras", []) if x.startswith("inferred:")],
             "dropped_bullets_for_space": dropped_bullets,
             "bullet_changes": changes,
             "bullet_rewrite_error": rw_err,
