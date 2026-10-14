@@ -301,6 +301,24 @@ def _end_key(dates):
     return (int(m.group(2)), MONTHS.get(m.group(1), 1)) if m else (0, 0)
 
 
+# Cindy 10-14: "make sure the cs academy is always included ... u can heavily change the bullet point for cs
+# academy because i did mostly everything ... i did machine learning, system, django, claude code stuff. so u can
+# just add anything thats best fit for the job description"
+ALWAYS_KEEP = ["CS Academy"]
+FLEX_SCOPE = {"CS Academy": "She built most of the CS Academy platform herself (Software Engineer Intern, Jul-Aug 2026): "
+              "machine learning features, backend/systems work, the Django web app (models, Query APIs, views, data layer), "
+              "and AI-assisted engineering with Claude Code (multi-agent workflows, custom skills, worktrees). Any of this "
+              "may be emphasised or described in the JD's terms."}
+
+
+def is_always(name):
+    return any(k.lower() in (name or "").lower() for k in ALWAYS_KEEP)
+
+
+def flex_scope(heading):
+    return next((v for k, v in FLEX_SCOPE.items() if k.lower() in (heading or "").lower()), None)
+
+
 def swap_experiences(tex, weights):
     """Cindy 10-09: keep WORK EXPERIENCE at max_experiences entries; an optional experience
     (optional-experiences.json) replaces the least JD-relevant entry only when it scores strictly higher.
@@ -337,7 +355,9 @@ def swap_experiences(tex, weights):
     keep = list(units)
     while len(keep) > cap:
         # drop the lowest-scoring entry; on a tie drop an optional one first, then the oldest
-        keep.remove(min(keep, key=lambda u: (u["score"], not u.get("optional"), u["end"])))
+        # Cindy 10-14: CS Academy is ALWAYS included -- never the one dropped
+        keep.remove(min([u for u in keep if not is_always(u["name"])] or keep,
+                        key=lambda u: (u["score"], not u.get("optional"), u["end"])))
     if not any(u.get("optional") for u in keep):
         return tex, None
     keep.sort(key=lambda u: u["end"], reverse=True)
@@ -425,7 +445,8 @@ def rewrite_bullets(base_tex, jd, weights, company, role):
         extra = [{"id": "b:" + e["id"], "fact": e["fact"]} for e in bank
                  if e["heading"].lower() in blk["heading"].lower()]
         payload.append({"heading": blk["heading"], "bullets": items, "confirmed_extra_facts": extra,
-                        "never_claim": [v["fact"] for v in vetoed if v["heading"].lower() in blk["heading"].lower()]})
+                        "never_claim": [v["fact"] for v in vetoed if v["heading"].lower() in blk["heading"].lower()],
+                        **({"flexible_scope": flex_scope(blk["heading"])} if flex_scope(blk["heading"]) else {})})
     unchanged = lambda k=0: base_tex  # noqa: E731
     prompt = (
         "You tailor résumé bullets for one specific job so they pass an ATS / recruiter screen.\n"
@@ -452,6 +473,11 @@ def rewrite_bullets(base_tex, jd, weights, company, role):
         "'inferred:<the clause>' in that bullet's 'extras'.\n"
         "5. No number/percentage/metric that isn't in that bullet or its extras; name a technology only if the "
         "bullet, its heading or its extras involve it; each bullet <= ~270 characters; plain text.\n"
+        "5b. A heading that has 'flexible_scope' (Cindy 10-14) is EXEMPT from rule 2 and rule 4b's limits: rewrite its "
+        "bullets HEAVILY so they best fit THIS job -- choose whichever parts of the work described in flexible_scope "
+        "(ML, systems/backend, Django, Claude Code/AI tooling) the JD cares about most and describe them in the JD's "
+        "terms; you may name any technology the flexible_scope names. Still: same number of bullets, same ids, "
+        "no number/metric that isn't already in that heading's bullets.\n"
         "6. drop_priority: ALL non-first bullet ids, least JD-relevant first (used only if the page overflows).\n"
         'Output ONLY JSON: {"bullets": {"o0": {"text": "...", "extras": []}, ...}, "drop_priority": ["o7", ...]}'
     )
@@ -473,7 +499,11 @@ def rewrite_bullets(base_tex, jd, weights, company, role):
               and bank_by_id[x]["heading"].lower() in blocks[bi]["heading"].lower()]
         inferred = [x for x in nb.get("extras") or [] if isinstance(x, str) and x.startswith("inferred:")]
         ex += inferred
-        allowed = set(NUM_RE.findall(old)).union(*[set(NUM_RE.findall(bank_by_id[x]["fact"])) for x in ex if x in bank_by_id])
+        if flex_scope(blocks[bi]["heading"]):
+            old_nums = set().union(*[set(NUM_RE.findall(t)) for (b2, t) in orig.values() if b2 == bi])
+        else:
+            old_nums = set(NUM_RE.findall(old))
+        allowed = old_nums.union(*[set(NUM_RE.findall(bank_by_id[x]["fact"])) for x in ex if x in bank_by_id])
         bad = set(NUM_RE.findall(txt)) - allowed
         if not txt or bad or len(txt) > 320:
             final[oid] = old
@@ -486,6 +516,8 @@ def rewrite_bullets(base_tex, jd, weights, company, role):
         changes.append({"heading": blocks[bi]["heading"], "source": oid, "extras": ex, "before": old, "after": txt})
     drop_prio = [d for d in drop_prio if d in orig and d not in firsts]
     drop_prio += [o for o in orig if o not in firsts and o not in drop_prio]   # anything the model omitted
+    # Cindy 10-14: CS Academy bullets are dropped last
+    drop_prio.sort(key=lambda o: is_always(blocks[orig[o][0]]["heading"]))
 
     def render(k=0):
         gone = set(drop_prio[:k])
