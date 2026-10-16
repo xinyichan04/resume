@@ -50,43 +50,42 @@
 \textbf{Teaching Assistant:} 16-385 Computer Vision
 
 \section*{WORK EXPERIENCE}
+\entry{SoftBank}{Tokyo, Japan}{Software Engineer Intern}{August 2026 - September 2026}
+\begin{itemize}
+  \item Improved production efficiency by 30\% for SoftBank's internal account system by automating its build-and-release workflow with a Jenkins CI/CD pipeline covering compile, Docker image build, instance launch, and a deploy-or-abort gate.
+  \item Established the system's first automated test coverage, where no unit tests or automation existed, by building a generative AI (LLM-based) workflow that translates natural-language requirements into Playwright tests.
+\end{itemize}
+
 \entry{CS Academy}{Pittsburgh, PA}{Software Engineer Intern}{July 2026 - August 2026}
 \begin{itemize}
-  \item Boosted development velocity by 3x and minimized token usage by designing a parallel multi-agent workflow using Conductor and Claude Code across isolated Git worktrees, utilizing custom skills and claude.md files to maintain strict contextual accuracy.
-  \item Optimized backend data-layer efficiency by leveraging Django Query APIs to map complex frontend interactions to highly performant database operations, ensuring seamless, low-latency state transitions for localized multimedia configurations.
+  \item Built most of the CS Academy learning platform and boosted development velocity by 3x by designing a parallel multi-agent AI workflow with Claude Code and Conductor across isolated Git worktrees, using custom skills and claude.md files to keep context accurate and cut token usage.
+  \item Translated user needs into product features and early machine learning prototypes for the Django web app, mapping frontend user interactions to performant Query API operations to deliver seamless, low-latency user experiences across localized multimedia configurations.
 \end{itemize}
 
 \entry{SMBC Nikko Securities}{Tokyo, Japan}{Equity System Development Intern}{May 2026 - June 2026}
 \begin{itemize}
-  \item Shipped a market data platform into production that aggregated real-time market depth from five stock exchanges, enabled direct order entry from the live depth display, and integrated Algo's child orders with their respective TCA markers.
-  \item Reduced market data latency by 60\% by optimizing server-to-server payload sizes. Analyzed system performance bottlenecks using KDB+/q queries and validated the latency reductions within a FIX-protocol trading simulator.
-  \item Shortened OpenOnload and AF\_XDP environment setup time by 70\% by developing a CLI that automated driver installation, kernel tuning, XDP configuration, and dependency management across many enterprise Linux environments.
+  \item Shipped a market data platform into production that aggregated real-time market depth from five stock exchanges, streamlining the trader workflow with direct order entry from the live depth display and linking Algo child orders to their TCA markers.
+  \item Reduced market data latency by 60\% by analyzing system performance bottlenecks with KDB+/q queries and optimizing server-to-server payload sizes, validated within a FIX-protocol trading simulator.
+  \item Shortened OpenOnload and AF\_XDP environment setup time by 70\% by building a CLI that automated driver installation, kernel tuning, XDP configuration, and dependency management across enterprise Linux environments, with diagnostics flagging misconfigured NIC/driver settings.
 \end{itemize}
 
 \entry{teamLab}{Tokyo, Japan}{Software Engineer Intern}{December 2025 - January 2026}
 \begin{itemize}
-  \item Reduced manual project management overhead by delivering GitHub Actions workflows that automatically updated Jira ticket statuses and sent Slack notifications based on codebase changes, which were adopted across the engineering department.
-  \item Delivered frontend features for a banking platform serving 15M+ annual users, optimized search functionality and infinite scrolling experiences with Next.js, Tailwind CSS, and REST APIs.
+  \item Reduced manual project management overhead by automating the engineering workflow with GitHub Actions that updated Jira ticket statuses and sent Slack notifications on codebase changes, validated by adoption across the engineering department.
+  \item Delivered user-facing frontend features for a banking platform serving 15M+ annual users, improving the search and infinite-scrolling user experience with Next.js, Tailwind CSS, and REST APIs.
 \end{itemize}
-
-\entry{Sony PlayStation}{Tokyo, Japan}{Software Engineer Intern}{May 2025 - August 2025}
-\begin{itemize}
-  \item Shipped a full-stack social media platform for PlayStation 5 by leading frontend architecture, integrating 30+ backend APIs, and building scalable React interfaces with Spring Boot services as part of a 6-engineer Agile team.
-  \item Reduced content delivery latency to sub-200ms by implementing a WebSocket and Redis Pub/Sub infrastructure that dynamically adapted to traffic spikes and data arrival rate, utilizing data prefetching fallbacks to maintain high throughput.
-\end{itemize}
-\textbf{Other Experiences: Morgan Stanley Early Insight Program}
+\textbf{Other Experiences: Sony PlayStation Software Engineer Intern, Morgan Stanley Early Insight Program}
 
 \section*{PROJECTS}
 \textbf{Bloomberg Terminal Lite}\par\vspace{2pt}
 \begin{itemize}
-  \item Built a real-time financial dashboard integrating live market data, price analytics, news feeds, and market-depth visualization
-  \item Developed AI-powered analysis tools that automatically collected peer companies, benchmarked performance against competitors, and generated trend insights and summary reports using the Anthropic API
+  \item Built a real-time financial dashboard integrating live market data, price analytics, news feeds, and market-depth visualization into a single intuitive user interface.
+  \item Developed generative AI analysis tools using LLM APIs (Anthropic API) that automatically collected peer companies, benchmarked performance against competitors, and generated trend insights and summary reports.
 \end{itemize}
 \vspace{2pt}
 \textbf{Kernel Bypassing}\par\vspace{2pt}
 \begin{itemize}
-  \item Built the network transport layer of a market data pipeline, sending UDP tick packets to userspace while bypassing the Linux kernel socket stack.
-  \item Validated the XDP program against the kernel verifier by building a Dockerized clang/libbpf/bpftool toolchain, enabling eBPF development on macOS where it isn't natively supported.
+  \item Built the network transport layer of a market data pipeline, delivering UDP tick packets to userspace by bypassing the Linux kernel socket stack, and benchmarked packet throughput and latency against the standard kernel socket path.
 \end{itemize}
 
 \input{skills.tex}
