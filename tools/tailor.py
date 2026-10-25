@@ -383,6 +383,80 @@ def swap_experiences(tex, weights):
     return "\n".join(out), info
 
 
+PROJ_BANK = os.path.join(REPO, "project-bank.json")
+# Cindy 10-24: "look at all the project i have in my github, and when u tailored my resume, u should pick one thats
+# the most matching, and write the descirption to match jd ... make sure to add some numeric number". The pool is
+# project-bank.json (facts and numbers read from her repos, each number sourced). The PROJECTS section keeps its
+# slot count; a bank project replaces the least JD-relevant current one only when it scores strictly higher.
+# Current projects keep her own bullets; swapped-in ones use their sourced draft bullets (rewrite_bullets then
+# words them to the JD, and its no-new-numbers guard keeps the numbers to what the bank sourced).
+PROJ_TITLES = {"job-pipeline": "LLM Agent Job Application Pipeline",
+               "bombhole-computer-vision-approach": "Bombhole: Computer Vision Scoring",
+               "django_backend_test": "Network Request Timing Benchmark (vLLM, Django)"}
+PROJ_CURRENT = {"bloomberg terminal lite": "BloombergTerminalLite", "kernel bypassing": "AF_XDP"}
+PROJ_BULLETS = 2
+
+
+def swap_projects(tex, weights):
+    """Returns (tex, info); info is None when nothing changed."""
+    if not os.path.exists(PROJ_BANK):
+        return tex, None
+    bank = {k: v for k, v in json.load(open(PROJ_BANK)).items() if not k.startswith("_")}
+    lines = tex.split("\n")
+    try:
+        a = next(i for i, l in enumerate(lines) if l.startswith(r"\section*{PROJECTS}"))
+        b = next(i for i, l in enumerate(lines) if SECTION_END in l)
+    except StopIteration:
+        return tex, None
+    starts = [i for i in range(a + 1, b) if lines[i].startswith(r"\textbf{")]
+    if not starts:
+        return tex, None
+    rel = lambda txt: round(sum(w for k, w in weights.items() if TERMS[k].search(txt)), 2)
+    units = []
+    for j, st in enumerate(starts):
+        e = starts[j + 1] if j + 1 < len(starts) else b
+        chunk = lines[st:e]
+        m = re.match(r"\\textbf\{([^{}]*)\}", chunk[0])
+        name = plain(m.group(1) if m else chunk[0]).strip()
+        key = PROJ_CURRENT.get(name.lower())
+        stack = " ".join((bank.get(key) or {}).get("stack", []))
+        units.append({"name": name, "key": key, "lines": chunk, "score": rel(plain("\n".join(chunk)) + " " + stack)})
+    have = {u["key"] for u in units}
+    for key, v in bank.items():
+        bul = v.get("draft_bullets") or []
+        if key in have or key not in PROJ_TITLES or not bul or v.get("hold"):   # hold: awaiting Cindy's OK
+            continue
+        stack = " ".join(v.get("stack", []))
+        best = sorted(bul, key=lambda x: -rel(x))[:PROJ_BULLETS]
+        best = [x for x in bul if x in best]                  # keep the bank's order
+        body = [rf"\textbf{{{tex_escape(PROJ_TITLES[key])}}}\par\vspace{{2pt}}", r"\begin{itemize}"]
+        body += ["  \\item " + tex_escape(x) for x in best] + [r"\end{itemize}", r"\vspace{2pt}"]
+        units.append({"name": PROJ_TITLES[key], "key": key, "lines": body, "score": rel(" ".join(bul) + " " + stack), "new": True})
+    # "pick one thats the most matching": at most ONE swap -- the best bank project replaces her least
+    # JD-relevant current project, only when it scores strictly higher (her own projects win ties)
+    cur = [u for u in units if not u.get("new")]
+    cands = [u for u in units if u.get("new")]
+    if not cands:
+        return tex, None
+    best, worst = max(cands, key=lambda u: u["score"]), min(cur, key=lambda u: u["score"])
+    if best["score"] <= worst["score"]:
+        return tex, None
+    keep = [u for u in cur if u is not worst] + [best]
+    keep.sort(key=lambda u: (u.get("new", False), -u["score"]))   # her current projects first, then swapped-in
+    body = []
+    for u in keep:
+        ls = [l for l in u["lines"]]
+        while ls and (not ls[-1].strip() or ls[-1].strip() == r"\vspace{2pt}"):
+            ls.pop()
+        body += ls + [r"\vspace{2pt}"]
+    body = body[:-1] + [""]
+    out = lines[:a + 1] + body + lines[b:]
+    info = {"added": [u["name"] for u in keep if u.get("new")],
+            "removed": [u["name"] for u in units if u not in keep and not u.get("new")],
+            "relevance": {u["name"]: u["score"] for u in units}}
+    return "\n".join(out), info
+
+
 def tex_escape(s):
     s = s.replace("\\", "")
     for c in "%&#_$":
@@ -592,6 +666,7 @@ def cmd_tailor(a):
     base = "main" if track == "swe" and not git("branch", "--list", "swe") else track
     base_tex = show(base, "resume.tex")
     base_tex, exp_swap = swap_experiences(base_tex, weights)
+    base_tex, proj_swap = swap_projects(base_tex, weights)
     if a.no_rewrite:
         new_tex, changes, rw_err = (lambda k=0: base_tex), [], "disabled (--no-rewrite)"
     else:
@@ -660,6 +735,7 @@ def cmd_tailor(a):
             "inferred_extras_used": [x[9:] for c in changes for x in c.get("extras", []) if x.startswith("inferred:")],
             "dropped_bullets_for_space": dropped_bullets,
             "experience_swap": exp_swap,
+            "project_swap": proj_swap,
             "bullet_changes": changes,
             "bullet_rewrite_error": rw_err,
         }
