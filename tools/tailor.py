@@ -319,7 +319,14 @@ def flex_scope(heading):
     return next((v for k, v in FLEX_SCOPE.items() if k.lower() in (heading or "").lower()), None)
 
 
-def swap_experiences(tex, weights):
+def _same_company(org, company):
+    """Cindy 10-26 (PlayStation batch): a prior internship at the company being applied to is never swapped out."""
+    norm = lambda x: re.sub(r"[^a-z0-9]+", " ", (x or "").lower()).strip()
+    o, c = norm(org), norm(company)
+    return bool(o and c) and (c in o or o in c)
+
+
+def swap_experiences(tex, weights, company=None):
     """Cindy 10-09: keep WORK EXPERIENCE at max_experiences entries; an optional experience
     (optional-experiences.json) replaces the least JD-relevant entry only when it scores strictly higher.
     Relevance = sum of JD weights of skills found in the entry's text. Order stays reverse-chronological.
@@ -356,7 +363,7 @@ def swap_experiences(tex, weights):
     while len(keep) > cap:
         # drop the lowest-scoring entry; on a tie drop an optional one first, then the oldest
         # Cindy 10-14: CS Academy is ALWAYS included -- never the one dropped
-        keep.remove(min([u for u in keep if not is_always(u["name"])] or keep,
+        keep.remove(min([u for u in keep if not is_always(u["name"]) and not _same_company(u["name"], company)] or keep,
                         key=lambda u: (u["score"], not u.get("optional"), u["end"])))
     if not any(u.get("optional") for u in keep):
         return tex, None
@@ -665,7 +672,7 @@ def cmd_tailor(a):
     track, track_scores = (a.track, None) if a.track != "auto" else pick_track(jd, weights)
     base = "main" if track == "swe" and not git("branch", "--list", "swe") else track
     base_tex = show(base, "resume.tex")
-    base_tex, exp_swap = swap_experiences(base_tex, weights)
+    base_tex, exp_swap = swap_experiences(base_tex, weights, a.company)
     base_tex, proj_swap = swap_projects(base_tex, weights)
     if a.no_rewrite:
         new_tex, changes, rw_err = (lambda k=0: base_tex), [], "disabled (--no-rewrite)"
