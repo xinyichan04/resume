@@ -52,41 +52,40 @@
 \section*{WORK EXPERIENCE}
 \entry{CS Academy}{Pittsburgh, PA}{Software Engineer Intern}{July 2026 - August 2026}
 \begin{itemize}
-  \item Boosted development velocity by 3x and minimized token usage by designing a parallel multi-agent workflow using Conductor and Claude Code across isolated Git worktrees, utilizing custom skills and claude.md files to maintain strict contextual accuracy.
-  \item Optimized backend data-layer efficiency by leveraging Django Query APIs to map complex frontend interactions to highly performant database operations, ensuring seamless, low-latency state transitions for localized multimedia configurations.
+  \item Boosted development velocity by 3x by building most of a full-stack Django web application and its backend APIs through a parallel multi-agent Claude Code workflow across isolated Git worktrees, using custom skills and claude.md files to keep context accurate and minimize token usage.
+  \item Delivered seamless, low-latency frontend interactions by designing Django models, views and Query APIs that mapped complex user actions to performant database operations, enabling smooth state transitions for localized multimedia configurations.
 \end{itemize}
 
 \entry{SMBC Nikko Securities}{Tokyo, Japan}{Equity System Development Intern}{May 2026 - June 2026}
 \begin{itemize}
-  \item Shipped a market data platform into production that aggregated real-time market depth from five stock exchanges, enabled direct order entry from the live depth display, and integrated Algo's child orders with their respective TCA markers.
-  \item Reduced market data latency by 60\% by optimizing server-to-server payload sizes. Analyzed system performance bottlenecks using KDB+/q queries and validated the latency reductions within a FIX-protocol trading simulator.
-  \item Shortened OpenOnload and AF\_XDP environment setup time by 70\% by developing a CLI that automated driver installation, kernel tuning, XDP configuration, and dependency management across many enterprise Linux environments.
+  \item Shipped a production market data platform with a live depth display that aggregated real-time market depth from five stock exchanges, enabled direct order entry from the display, and integrated Algo child orders with their TCA markers.
+  \item Reduced market data latency by 60\% by optimizing server-to-server payload sizes and profiling performance bottlenecks with KDB+/q queries, validated in a FIX-protocol trading simulator.
+  \item Shortened OpenOnload and AF\_XDP environment setup time by 70\% by developing a CLI that automated driver installation, kernel tuning, XDP configuration and dependency management across enterprise Linux environments, with diagnostics flagging misconfigured settings.
 \end{itemize}
 
 \entry{teamLab}{Tokyo, Japan}{Software Engineer Intern}{December 2025 - January 2026}
 \begin{itemize}
-  \item Reduced manual project management overhead by delivering GitHub Actions workflows that automatically updated Jira ticket statuses and sent Slack notifications based on codebase changes, which were adopted across the engineering department.
-  \item Delivered frontend features for a banking platform serving 15M+ annual users, optimized search functionality and infinite scrolling experiences with Next.js, Tailwind CSS, and REST APIs.
+  \item Reduced manual project management overhead by delivering GitHub Actions workflows that automatically updated Jira ticket statuses and sent Slack notifications on codebase changes, adopted across the engineering department.
+  \item Delivered frontend features for a banking web platform serving 15M+ annual users by building optimized search and infinite-scroll interfaces with Next.js (React), Tailwind CSS and REST APIs.
 \end{itemize}
 
 \entry{Sony PlayStation}{Tokyo, Japan}{Software Engineer Intern}{May 2025 - August 2025}
 \begin{itemize}
-  \item Shipped a full-stack social media platform for PlayStation 5 by leading frontend architecture, integrating 30+ backend APIs, and building scalable React interfaces with Spring Boot services as part of a 6-engineer Agile team.
-  \item Reduced content delivery latency to sub-200ms by implementing a WebSocket and Redis Pub/Sub infrastructure that dynamically adapted to traffic spikes and data arrival rate, utilizing data prefetching fallbacks to maintain high throughput.
+  \item Shipped a full-stack social media platform for PlayStation 5 by leading frontend architecture, building scalable React interfaces and integrating 30+ backend APIs with Spring Boot services as part of a 6-engineer Agile team.
+  \item Reduced content delivery latency to sub-200ms by implementing WebSocket and Redis Pub/Sub infrastructure that adapted to traffic spikes and data arrival rates with prefetching fallbacks, validated by load testing and connection/throughput monitoring.
 \end{itemize}
 \textbf{Other Experiences: Morgan Stanley Early Insight Program}
 
 \section*{PROJECTS}
 \textbf{Bloomberg Terminal Lite}\par\vspace{2pt}
 \begin{itemize}
-  \item Built a real-time financial dashboard integrating live market data, price analytics, news feeds, and market-depth visualization
-  \item Developed AI-powered analysis tools that automatically collected peer companies, benchmarked performance against competitors, and generated trend insights and summary reports using the Anthropic API
+  \item Built a real-time financial web dashboard integrating live market data, price analytics, news feeds and market-depth visualization into an interactive frontend.
+  \item Developed AI-powered analysis tools using the Anthropic API that automatically collected peer companies, benchmarked performance against competitors, and generated trend insights and summary reports.
 \end{itemize}
 \vspace{2pt}
 \textbf{Kernel Bypassing}\par\vspace{2pt}
 \begin{itemize}
-  \item Built the network transport layer of a market data pipeline, sending UDP tick packets to userspace while bypassing the Linux kernel socket stack.
-  \item Validated the XDP program against the kernel verifier by building a Dockerized clang/libbpf/bpftool toolchain, enabling eBPF development on macOS where it isn't natively supported.
+  \item Built the network transport layer of a market data pipeline, delivering UDP tick packets to userspace while bypassing the Linux kernel socket stack, and benchmarked AF\_XDP throughput and latency against standard sockets.
 \end{itemize}
 
 \input{skills.tex}
