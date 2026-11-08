@@ -669,6 +669,11 @@ def cmd_tailor(a):
     if len(jd.strip()) < 200:
         raise SystemExit("JD text too short (<200 chars): pass the full job description")
     weights = jd_weights(jd, a.company)
+    if not weights:
+        # 11-07: Handshake appliers piped page chrome (>200 chars, zero skills) and got 0.0->0.0 résumés
+        # that scored WORSE than main. No recognizable skill = not the job description.
+        raise SystemExit("JD text has no recognizable skills: this is probably not the job description. "
+                         "Use the stored jd_text from the run's candidates.json/alljds.json instead.")
     track, track_scores = (a.track, None) if a.track != "auto" else pick_track(jd, weights)
     base = "main" if track == "swe" and not git("branch", "--list", "swe") else track
     base_tex = show(base, "resume.tex")
